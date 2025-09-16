@@ -50,7 +50,7 @@
 
 :root {
 	--radius: 0.625rem;
-	--background-light: #E9D6FF;
+	--background-light: #e0c5ff;
 	--background-dark: #9967FE;
 	--foreground: #E1E1E1;
 	--card: #FFFFFF;
@@ -90,7 +90,7 @@
 	--sidebar-border: oklch(0.923 0.003 48.717);
 	--sidebar-ring: oklch(0.709 0.01 56.259);
 
-	--animation-float: float 1s ease-in-out infinite;
+	--animation-float: float 4s ease-in-out infinite;
 }
 
 @layer base {
@@ -104,45 +104,11 @@
 }
 
 .background-gradient {
-	background: linear-gradient(180deg, #E9D6FF 0%, #9967FE 50%);
+	background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 50%);
 }
 
-
-.custom-center-blur {
-	border: 4.65px solid #F2F2F2;
-	background: rgba(214, 214, 214, 0.30);
-	box-shadow:
-		0 1006.686px 281.314px 0 rgba(0, 0, 0, 0.00),
-		0 644px 258.065px 0 rgba(0, 0, 0, 0.01),
-		0 362.686px 218.542px 0 rgba(0, 0, 0, 0.05),
-		0 160.419px 160.419px 0 rgba(0, 0, 0, 0.09),
-		0 39.523px 88.347px 0 rgba(0, 0, 0, 0.10);
-	backdrop-filter: blur(20.92418670654297px);
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
-}
-
-/* ::after for gradient-only border effect */
-.custom-center-blur::after {
-	content: '';
-	position: absolute;
-	top: -4.65px;
-	left: -4.65px;
-	right: -4.65px;
-	bottom: -4.65px;
-	border-radius: inherit;
-	background: linear-gradient(90deg, #ff8a00, #e52e71, #2fd1ff);
-	/* change colors as needed */
-	z-index: 0;
-	pointer-events: none;
-	/* Mask the inner area to only show gradient at the edge */
-	-webkit-mask:
-		linear-gradient(#fff 0 0) content-box,
-		linear-gradient(#fff 0 0);
-	-webkit-mask-composite: xor;
-	/* Use 'exclude' in modern syntax */
-	mask-composite: exclude;
+.background-gradient-rev {
+	background: linear-gradient(0deg, var(--color-background-light) 0%, var(--color-background-dark) 50%);
 }
 
 /* slow and small up down movement amination */
@@ -154,7 +120,7 @@
 	}
 
 	50% {
-		transform: translateY(-100px);
+		transform: translateY(-15px);
 	}
 }
 

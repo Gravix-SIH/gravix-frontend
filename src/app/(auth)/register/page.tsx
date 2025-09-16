@@ -1,5 +1,4 @@
 "use client";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -14,12 +13,16 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
+import Image from "next/image";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 
 // ✅ Validation schema with zod
 const signupSchema = z.object({
 	name: z.string().min(2, "Name must be at least 2 characters"),
 	email: z.string().email("Invalid email address"),
 	password: z.string().min(6, "Password must be at least 6 characters"),
+	role: z.enum(["student", "counsellor"]).refine((val) => !!val, { message: "Role is required" }),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -31,6 +34,7 @@ export default function SignupPage() {
 			name: "",
 			email: "",
 			password: "",
+			role: "student",
 		},
 	});
 
@@ -40,9 +44,12 @@ export default function SignupPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-indigo-100 px-4">
-			<div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-				<h1 className="text-2xl font-bold text-center text-gray-800">
+		<div className="flex min-h-screen items-center justify-center x-4">
+			<div className="absolute w-full h-screen pointer-events-none">
+				<Image alt="BG" src={"/auth-bg.png"} width={1024} height={720} className="h-full aspect-video w-full" />
+			</div>
+			<Card className="w-full max-w-md p-8 border-black/5 shadow-xl !bg-black/10 space-y-6">
+				<h1 className="text-3xl font-bold text-center text-text-secondary">
 					Create an Account
 				</h1>
 
@@ -90,20 +97,39 @@ export default function SignupPage() {
 							)}
 						/>
 
-						<p className="mt-2 text-center text-sm text-gray-600">
+						<FormField
+							control={form.control}
+							name="role"
+							render={({ field }) => (
+								<FormItem className="flex items-center justify-between">
+									<FormLabel>Are you a Counsellor?</FormLabel>
+									<FormControl>
+										<Switch
+											className="w-10 h-6"
+											checked={field.value === "counsellor"}
+											onCheckedChange={(checked) =>
+												field.onChange(checked ? "counsellor" : "student")
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<p className="mt-2 text-center text-sm text-text-primary">
 							Already have an account?{" "}
-							<Link href="/login" className="text-indigo-600 hover:underline">
+							<Link href="/login" className="text-background-light hover:underline">
 								Login
 							</Link>
 						</p>
-
 
 						<Button type="submit" className="w-full">
 							Sign Up
 						</Button>
 					</form>
 				</Form>
-			</div>
+			</Card>
 		</div>
 	);
 }

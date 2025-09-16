@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 const Navbar = () => {
 	return (
-		<header className="h-[7.5vh] border-b border-text-accent absolute bg-black/5 backdrop-blur-md shadow-xl w-full top-0 z-[1000]">
+		<header className="h-[7.5vh] flex items-center border-b border-text-accent absolute bg-black/5 backdrop-blur-md shadow-xl w-full top-0 z-[1000]">
 			<div className="container mx-auto flex items-center justify-between py-4 px-6">
 				<Link href="/" className="text-2xl font-bold text-text-primary">
 				<Image src="/logo.svg" alt="Logo" width={40} height={40} className="inline mr-2 mb-1"/>

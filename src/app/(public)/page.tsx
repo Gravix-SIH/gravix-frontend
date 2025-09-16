@@ -5,8 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import { Bot, BriefcaseBusiness, Check, GraduationCap, Heart, HeartPulse, HeartPulseIcon, Layers, Leaf, MessageCircleCode, NotebookText, Shield, ShieldPlus, Users } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Bot, BriefcaseBusiness, Check, GraduationCap, Heart, HeartPulseIcon, Layers, Leaf, MessageCircleCode, NotebookText, Shield, ShieldPlus, Users } from "lucide-react";
 
 // Motion presets for smooth staggering
 const fadeUp = (delay = 0) => ({
@@ -83,7 +82,7 @@ export default function HomePage() {
 			]
 		},
 		{
-			icon: <Users color="lightblue" size={30} />,
+			icon: <Users color="turquoise" size={30} />,
 			heading: "Relationship Therapy",
 			subheading: "Strengthen your relationships through couples counseling, family therapy, and communication skills training.",
 			points: [
@@ -143,8 +142,8 @@ export default function HomePage() {
 		<div className="min-h-screen overflow-auto">
 
 			{/* Hero Section */}
-			<section className="relative flex items-center justify-center md:px-16 px-6 py-24 w-full min-h-screen">
-				<motion.div className="flex flex-col w-6/12 justify-center pl-24">
+			<section className="relative flex flex-col-reverse md:flex-row items-center justify-center md:px-16 px-6 py-24 w-full min-h-screen">
+				<motion.div className="flex flex-col md:w-6/12 justify-center pt-16 md:pt-0 pl-24">
 					<motion.h1
 						{...fadeUp(0.1)}
 						className="text-5xl text-text-primary font-extrabold sm:text-6xl"
@@ -170,11 +169,12 @@ export default function HomePage() {
 					</motion.div>
 				</motion.div>
 				<motion.div {...fadeUp(0.7)} className="flex w-6/12 justify-center">
-					<div className="p-7 bg-white/25 backdrop-blur-2xl rounded-2xl relative">
-						<Card className="absolute p-4 !backdrop-blur-6xl !bg-white/40 top-0 right-0 translate-x-1/2 -translate-y-1/2"><Heart size={34} color="lightcoral" fill="lightcoral" /></Card>
-						<Card className="absolute p-4 bottom-0 left-0 !bg-white/40 !backdrop-blur-6xl -translate-x-1/2 translate-y-1/2"><Leaf size={34} color="lightgreen" fill="lightgreen" /></Card>
-
-						<Image alt="Hero" src="/hero-image.png" width={500} height={400} className="rounded-2xl shadow-lg" />
+					<div className="relative">
+						<Card className="absolute z-10 p-4 !backdrop-blur-6xl !bg-white/40 top-0 right-0 translate-x-1/2 -translate-y-1/2"><Heart size={34} color="lightcoral" fill="lightcoral" /></Card>
+						<Card className="absolute z-10 p-4 bottom-0 left-0 !bg-white/40 !backdrop-blur-6xl -translate-x-1/2 translate-y-1/2"><Leaf size={34} color="lightgreen" fill="lightgreen" /></Card>
+						<div className="p-7 bg-white/25 backdrop-blur-2xl rounded-2xl animate-float">
+							<Image alt="Hero" src="/hero-image.png" width={500} height={400} className="rounded-2xl shadow-lg" />
+						</div>
 					</div>
 				</motion.div>
 			</section>
@@ -326,7 +326,6 @@ export default function HomePage() {
 					<Link href="/signup">
 						<Button
 							size="lg"
-							className=" text-indigo-600"
 						>
 							Get Started Now
 						</Button>
