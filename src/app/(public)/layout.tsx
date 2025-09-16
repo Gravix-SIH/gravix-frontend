@@ -8,10 +8,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<div>
+		<div className="max-h-screen background-gradient">
 			<Navbar />
-			{children}
-			<Footer />
+			<div className="h-screen overflow-auto">
+				{children}
+				<Footer />
+			</div>
 		</div>
 	);
 }
