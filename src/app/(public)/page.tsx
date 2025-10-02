@@ -158,7 +158,7 @@ export default function HomePage() {
 						University life can be overwhelming — but you’re not alone. Get personalized assessments, book sessions with counsellors, and discover resources that help you find balance.
 					</motion.p>
 					<motion.div {...fadeUp(0.5)} className="mt-8 flex space-x-4">
-						<Link href="/signup">
+						<Link href="/register">
 							<Button size="lg">Get Started</Button>
 						</Link>
 						<Link href="/about">
@@ -323,7 +323,7 @@ export default function HomePage() {
 					and collaboration.
 				</motion.p>
 				<motion.div {...fadeUp(0.3)} className="mt-8">
-					<Link href="/signup">
+					<Link href="/register">
 						<Button
 							size="lg"
 						>

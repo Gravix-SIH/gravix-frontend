@@ -16,6 +16,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { apiClient } from "@/lib/apiClient";
+import { UserResponse } from "@/models/User";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 // ✅ Validation schema with zod
 const signupSchema = z.object({
@@ -28,6 +34,8 @@ const signupSchema = z.object({
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
+	const { loading, signup, checkInitialAuth } = useAuth();
+	const router = useRouter();
 	const form = useForm<SignupFormValues>({
 		resolver: zodResolver(signupSchema),
 		defaultValues: {
@@ -38,9 +46,22 @@ export default function SignupPage() {
 		},
 	});
 
-	function onSubmit(values: SignupFormValues) {
-		console.log("Signup Data:", values);
-		// 🔗 Hook this to your API route /auth/signup
+	useEffect(() => {
+		checkInitialAuth();
+	}, [checkInitialAuth]);
+
+	async function onSubmit(values: SignupFormValues) {
+		try {
+			await signup(values);
+			toast.info(`User registered successfully.`, {
+				duration: 3000,
+			});
+			router.push('/dashboard');
+		} catch (error: any) {
+			console.log(error);
+			toast.error("Something went wrong.", { duration: 3000 });
+
+		}
 	}
 
 	return (
@@ -124,8 +145,8 @@ export default function SignupPage() {
 							</Link>
 						</p>
 
-						<Button type="submit" className="w-full">
-							Sign Up
+						<Button type="submit" className="w-full" disabled={loading}>
+							{"Sign Up"}
 						</Button>
 					</form>
 				</Form>

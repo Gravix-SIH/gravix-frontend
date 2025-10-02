@@ -13,12 +13,12 @@ const fadeUp = (delay = 0) => ({
 
 export default function AboutPage() {
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100">
+		<div className="min-h-screen from-white via-gray-50 to-gray-100">
 			{/* Hero */}
 			<section className="px-6 py-24 text-center">
 				<motion.h1
 					{...fadeUp(0.1)}
-					className="text-5xl font-extrabold text-gray-900"
+					className="text-5xl font-extrabold text-gray"
 				>
 					About Us
 				</motion.h1>
@@ -36,14 +36,14 @@ export default function AboutPage() {
 			<section className="mx-auto max-w-6xl px-6 py-16 grid gap-12 md:grid-cols-2 items-center">
 				<motion.div {...fadeUp(0.1)}>
 					<img
-						src="https://source.unsplash.com/600x400/?collaboration,team"
+						src="/story.jpg"
 						alt="Our team"
-						className="rounded-xl shadow-md"
+						className="rounded-xl max-h-72 shadow-md"
 					/>
 				</motion.div>
 				<motion.div {...fadeUp(0.3)}>
-					<h2 className="text-3xl font-bold text-gray-900">Our Story</h2>
-					<p className="mt-4 text-gray-600 leading-relaxed">
+					<h2 className="text-3xl font-bold text-gray">Our Story</h2>
+					<p className="mt-4 text-gray-700 leading-relaxed">
 						Founded by a group of engineers and mental health advocates, we set out
 						to create a unified platform. One that integrates AI chat, community forums,
 						assessments, and booking—all under a privacy-first philosophy.
@@ -52,70 +52,72 @@ export default function AboutPage() {
 			</section>
 
 			{/* Mission & Values */}
-			<section className="bg-white py-20">
-				<div className="mx-auto max-w-6xl px-6 text-center">
-					<h2 className="text-3xl font-bold text-gray-900">Our Mission & Values</h2>
-					<p className="mt-2 text-gray-600">
-						The principles that guide our decisions and culture.
-					</p>
+			<section className=" py-20 flex flex-col items-center p-6 lg:p-0 mx-10">
+				<Card className=" w-fit">
+					<div className="mx-auto max-w-6xl px-6 text-center">
+						<h2 className="text-3xl font-bold text-gray-900">Our Mission & Values</h2>
+						<p className="mt-2 text-gray-600">
+							The principles that guide our decisions and culture.
+						</p>
 
-					<div className="mt-12 grid gap-8 md:grid-cols-3">
-						{[
-							{
-								title: "Innovation",
-								desc: "We push the limits of AI to solve real human problems.",
-							},
-							{
-								title: "Privacy",
-								desc: "Your data belongs to you. Always encrypted, always secure.",
-							},
-							{
-								title: "Community",
-								desc: "We grow together, learning and sharing knowledge openly.",
-							},
-						].map((value, i) => (
-							<motion.div
-								key={value.title}
-								{...fadeUp(0.2 + i * 0.2)}
-							>
-								<Card className="hover:shadow-md transition">
-									<CardHeader>
-										<CardTitle>{value.title}</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<p className="text-gray-600">{value.desc}</p>
-									</CardContent>
-								</Card>
-							</motion.div>
-						))}
+						<div className="mt-12 grid gap-8 md:grid-cols-3">
+							{[
+								{
+									title: "Innovation",
+									desc: "We push the limits of AI to solve real human problems.",
+								},
+								{
+									title: "Privacy",
+									desc: "Your data belongs to you. Always encrypted, always secure.",
+								},
+								{
+									title: "Community",
+									desc: "We grow together, learning and sharing knowledge openly.",
+								},
+							].map((value, i) => (
+								<motion.div
+									key={value.title}
+									{...fadeUp(0.2 + i * 0.2)}
+								>
+									<Card className="hover:shadow-md transition">
+										<CardHeader>
+											<CardTitle className="text-gray-800 text-2xl font-bold">{value.title}</CardTitle>
+										</CardHeader>
+										<CardContent>
+											<p className="text-gray-600 text-base">{value.desc}</p>
+										</CardContent>
+									</Card>
+								</motion.div>
+							))}
+						</div>
 					</div>
-				</div>
+				</Card>
 			</section>
 
 			{/* Team */}
-			<section className="mx-auto max-w-6xl px-6 py-20">
-				<h2 className="text-3xl font-bold text-center text-gray-900">Meet the Team</h2>
+			<section className="mx-auto max-w-6xl w-auto px-6 py-20">
+				<h2 className="text-3xl font-bold text-center text-white-900">Meet the Team</h2>
 				<div className="mt-12 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-					{["Alice Johnson", "Bob Kumar", "Charlie Lin"].map((name, i) => (
+					{["Utpal", "Lakshya", "Ayush", "Swayam", "Vishrav", "Hazel"].map((name, i) => (
 						<motion.div
 							key={name}
 							{...fadeUp(0.3 + i * 0.1)}
-							className="rounded-xl bg-white p-6 shadow-md text-center"
+							className=" rounded-xl bg-white/30 p-6 shadow-md text-center"
 						>
 							<img
 								src={`https://i.pravatar.cc/150?img=${i + 10}`}
 								alt={name}
 								className="mx-auto h-24 w-24 rounded-full border shadow-sm"
 							/>
-							<h3 className="mt-4 text-lg font-semibold">{name}</h3>
-							<p className="text-sm text-gray-500">Core Team</p>
+							<h3 className="mt-4 text-lg font-bold">{name}</h3>
+							<p className="text-base text-black">Core Team</p>
 						</motion.div>
 					))}
 				</div>
 			</section>
 
 			{/* Closing CTA */}
-			<section className="bg-indigo-600 py-20 text-white text-center">
+			<section className=" py-20 text-white text-center">
 				<motion.h3 {...fadeUp(0.1)} className="text-3xl font-semibold">
 					Be Part of Our Journey
 				</motion.h3>
@@ -124,7 +126,7 @@ export default function AboutPage() {
 					tools. Join us and help shape the future.
 				</motion.p>
 				<motion.div {...fadeUp(0.3)} className="mt-8">
-					<Link href="/signup">
+					<Link href="/register">
 						<Button
 							size="lg"
 							className="bg-white text-indigo-600 hover:bg-gray-100"

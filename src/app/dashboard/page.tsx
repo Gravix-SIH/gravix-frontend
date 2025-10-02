@@ -42,10 +42,12 @@ import CounsellorAssessments from "./counsellor/Assessments";
 import CounsellorBookings from "./counsellor/Bookings";
 import CounsellorResources from "./counsellor/Resources";
 import CounsellorForum from "./counsellor/Forum";
+import { useAuth } from "@/hooks/useAuth";
+import { UserRole } from "@/models/User";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import Image from "next/image";
 
-type Role = "student" | "admin" | "counsellor";
-
-const navConfig: Record<Role, { label: string; key: string; icon: any }[]> = {
+const navConfig: Record<UserRole, { label: string; key: string; icon: any }[]> = {
 	student: [
 		{ label: "Overview", key: "overview", icon: LayoutDashboard },
 		{ label: "Chat", key: "chat", icon: Bot },
@@ -75,17 +77,28 @@ const navConfig: Record<Role, { label: string; key: string; icon: any }[]> = {
 };
 
 export default function DashboardPage() {
-	const [role] = useState<Role>("student");
+	const { user, logout } = useAuth();
+	const [role] = useState<UserRole>(user?.role || "student");
+	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [active, setActive] = useState("overview");
 
 	const navItems = navConfig[role];
+
+	const handleLogout = async () => {
+		try {
+			console.log("Logging out...");
+			await logout();
+		} catch (err) {
+			console.log(err);
+		}
+	}
 
 	// Content Renderer
 	const renderContent = () => {
 		if (role === "student") {
 			switch (active) {
-				case "overview": return <StudentOverview />;
-				case "chat": return <StudentChat />;
+				case "overview": return <StudentOverview setShowSection={setActive} />;
+				case "chat": return <StudentChat setShowSection={setActive} />;
 				case "assessment": return <StudentAssessment />;
 				case "booking": return <StudentBooking />;
 				case "resources": return <StudentResources />;
@@ -118,65 +131,75 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="flex min-h-screen">
-			{/* Sidebar */}
-			<motion.aside
-				initial={{ x: -200 }}
-				animate={{ x: 0 }}
-				transition={{ type: "spring", stiffness: 80 }}
-				className="flex w-64 flex-col border-r shadow-lg"
-			>
-				<div className="p-6">
-					<h2 className="text-2xl font-bold text-text-primary">Dashboard</h2>
-					<p className="text-sm text-text-secondary capitalize">{role}</p>
+		<ProtectedRoute>
+			<div className="flex h-screen w-screen relative">
+				<div className="absolute top-0 left-0 bottom-0 right-0 pointer-events-none overflow-hidden -z-10">
+					<Image alt="BG" src={"/dashboard-bg.svg"} width={1024} height={720} className="w-full" />
 				</div>
-				<nav className="flex-1 space-y-2 px-4">
-					{navItems.map(({ label, key, icon: Icon }) => (
-						<Button
-							key={key}
-							variant={active === key ? "secondary" : "ghost"}
-							className="w-full justify-start"
-							onClick={() => setActive(key)}
-						>
-							<Icon className="mr-2 h-5 w-5" />
-							{label}
-						</Button>
-					))}
-				</nav>
-				<div className="p-4">
-					<Button variant="ghost" className="w-full justify-start text-red-500">
-						<LogOut className="mr-2 h-5 w-5" /> Logout
-					</Button>
-				</div>
-			</motion.aside>
-
-			{/* Main */}
-			<div className="flex flex-1 flex-col">
-				<header className="flex items-center justify-between border-b px-6 py-4 shadow-sm">
-					<h1 className="text-xl font-semibold capitalize">{active}</h1>
-					<div className="flex items-center space-x-4">
-						<Button size="sm" variant="outline">
-							{role.toUpperCase()}
-						</Button>
-						<img
-							src="https://i.pravatar.cc/40"
-							alt="User Avatar"
-							className="h-10 w-10 rounded-full border"
-						/>
+				{/* Sidebar */}
+				<motion.aside
+					initial={{ x: -200 }}
+					animate={{ x: 0 }}
+					transition={{ type: "spring", stiffness: 80 }}
+					className={`${sidebarOpen ? 'w-64' : 'w-0'} transition-all duration-300 overflow-hidden flex flex-col border-r shadow-lg`}
+				>
+					<div className="p-6">
+						<h2 className="text-2xl font-bold text-text-primary">Dashboard</h2>
+						<p className="text-sm text-text-secondary capitalize">{role}</p>
 					</div>
-				</header>
-				<main className="flex-1 p-6">
-					<motion.div
-						key={active}
-						initial={{ opacity: 0, y: 15 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.3 }}
-						className="space-y-6 h-full"
-					>
-						{renderContent()}
-					</motion.div>
-				</main>
+					<nav className="flex-1 space-y-2 px-4">
+						{navItems.map(({ label, key, icon: Icon }) => (
+							<Button
+								key={key}
+								variant={active === key ? "secondary" : "ghost"}
+								className="w-full justify-start"
+								onClick={() => setActive(key)}
+							>
+								<Icon className="mr-2 h-5 w-5" />
+								{label}
+							</Button>
+						))}
+					</nav>
+					<div className="p-4">
+						<Button variant="ghost" className="w-full justify-start text-rose-500" onClick={handleLogout}>
+							<LogOut className="mr-2 h-5 w-5" /> Logout
+						</Button>
+					</div>
+				</motion.aside>
+
+				{/* Main */}
+				<div className="flex flex-1 flex-col">
+					<header className="flex items-center justify-between border-b px-6 py-4 shadow-sm">
+						<h1 className="text-xl font-semibold capitalize">
+							<Button variant="outline" className="mr-4 p-0" onClick={() => setSidebarOpen(!sidebarOpen)}>
+								<LayoutDashboard className="inline-block " />
+							</Button>
+							{active}
+						</h1>
+						<div className="flex items-center space-x-4">
+							<Button size="sm" variant="default">
+								{user?.name || "User"}
+							</Button>
+							<img
+								src="https://i.pravatar.cc/40"
+								alt="User Avatar"
+								className="h-10 w-10 rounded-full border"
+							/>
+						</div>
+					</header>
+					<main className="flex-1">
+						<motion.div
+							key={active}
+							initial={{ opacity: 0, y: 15 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.3 }}
+							className="space-y-6 h-full"
+						>
+							{renderContent()}
+						</motion.div>
+					</main>
+				</div>
 			</div>
-		</div>
+		</ProtectedRoute >
 	);
 }
