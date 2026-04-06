@@ -15,7 +15,7 @@ export default function AboutPage() {
 		},
 		{
 			name: "Hazel",
-			image: "/team/hazel.png",
+			image: "/team/hazel.jpeg",
 		},
 	];
 
