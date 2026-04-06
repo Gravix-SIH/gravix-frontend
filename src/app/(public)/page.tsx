@@ -1,20 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Bot, BriefcaseBusiness, Check, GraduationCap, Heart, HeartPulseIcon, Layers, Leaf, MessageCircleCode, NotebookText, Shield, ShieldPlus, Users } from "lucide-react";
-
-// Motion presets for smooth staggering
-const fadeUp = (delay = 0) => ({
-	initial: { opacity: 0, y: 40 },
-	animate: { opacity: 1, y: 0 },
-	transition: { duration: 0.7, delay },
-});
+import { AnimatedElement, ScrollRevealSection, ParallaxSection, HoverAnimation } from "@/components/animations/AnimatedElement";
+import { useGSAPFadeIn, useGSAPScrollReveal, useGSAPParallax } from "@/hooks/useGSAPAnimations";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function HomePage() {
+	const { user, loading } = useAuth();
+	const router = useRouter();
+
+	const getDashboardLink = () => {
+		return '/dashboard';
+	};
+
+	const handleGetStarted = () => {
+		if (user) {
+			router.push(getDashboardLink());
+		} else {
+			router.push('/register');
+		}
+	};
 
 	const features = [
 		{
@@ -55,16 +66,6 @@ export default function HomePage() {
 				"Access articles, videos, and guided exercises",
 				"Tailored recommendations based on your needs",
 				"Save and revisit your favorite resources"
-			]
-		},
-		{
-			icon: <MessageCircleCode color="orange" size={30} />,
-			heading: "Community Forum",
-			subheading: "Share, support, and grow together in a safe space.",
-			points: [
-				"Participate in discussions with peers",
-				"Anonymous posting options for privacy",
-				"Get answers and advice from the community"
 			]
 		},
 	];
@@ -139,130 +140,131 @@ export default function HomePage() {
 	]
 
 	return (
-		<div className="min-h-screen overflow-auto">
+		<div className="min-h-screen overflow-x-hidden">
 
 			{/* Hero Section */}
-			<section className="relative flex flex-col-reverse md:flex-row items-center justify-center md:px-16 px-6 py-24 w-full min-h-screen">
-				<motion.div className="flex flex-col md:w-6/12 justify-center pt-16 md:pt-0 pl-24">
-					<motion.h1
-						{...fadeUp(0.1)}
-						className="text-5xl text-text-primary font-extrabold sm:text-6xl"
+			<section className="relative flex flex-col-reverse md:flex-row items-center justify-center md:px-16 px-6 py-16 sm:py-24 w-full min-h-[100vh]">
+				<div className="flex flex-col md:w-6/12 justify-center pt-12 md:pt-0 md:pl-16 lg:pl-24">
+					<h1
+						className="text-4xl sm:text-5xl md:text-6xl text-text-primary font-extrabold"
 					>
 						Where Students Find
 						<span className="text-background-light/80"> Balance & Guidance</span>
-					</motion.h1>
-					<motion.p
-						{...fadeUp(0.3)}
+					</h1>
+					<p
 						className="mt-6 max-w-2xl text-lg text-text-accent"
 					>
 						University life can be overwhelming — but you’re not alone. Get personalized assessments, book sessions with counsellors, and discover resources that help you find balance.
-					</motion.p>
-					<motion.div {...fadeUp(0.5)} className="mt-8 flex space-x-4">
-						<Link href="/register">
-							<Button size="lg">Get Started</Button>
-						</Link>
-						<Link href="/about">
-							<Button size="lg" variant="outline">
-								Learn More
-							</Button>
-						</Link>
-					</motion.div>
-				</motion.div>
-				<motion.div {...fadeUp(0.7)} className="flex w-6/12 justify-center">
+					</p>
+					<div className="mt-8 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+						<Button size="lg" onClick={handleGetStarted}>Get Started</Button>
+						<Button size="lg" variant="outline" onClick={() => {
+							const featuresSection = document.getElementById("features");
+							if (featuresSection) {
+								featuresSection.scrollIntoView({ behavior: "smooth" });
+							}
+						}}>
+							Learn More
+						</Button>
+					</div>
+				</div>
+				<div className="flex w-full md:w-6/12 justify-center mt-8 md:mt-0">
 					<div className="relative">
-						<Card className="absolute z-10 p-4 !backdrop-blur-6xl !bg-white/40 top-0 right-0 translate-x-1/2 -translate-y-1/2"><Heart size={34} color="lightcoral" fill="lightcoral" /></Card>
-						<Card className="absolute z-10 p-4 bottom-0 left-0 !bg-white/40 !backdrop-blur-6xl -translate-x-1/2 translate-y-1/2"><Leaf size={34} color="lightgreen" fill="lightgreen" /></Card>
-						<div className="p-7 bg-white/25 backdrop-blur-2xl rounded-2xl animate-float">
-							<Image alt="Hero" src="/hero-image.png" width={500} height={400} className="rounded-2xl shadow-lg" />
+						<Card className="absolute z-10 p-3 sm:p-4 !backdrop-blur-6xl !bg-white/40 top-0 right-0 translate-x-1/2 -translate-y-1/2"><Heart size={28} color="lightcoral" fill="lightcoral" /></Card>
+						<Card className="absolute z-10 p-3 sm:p-4 bottom-0 left-0 !bg-white/40 !backdrop-blur-6xl -translate-x-1/2 translate-y-1/2"><Leaf size={28} color="lightgreen" fill="lightgreen" /></Card>
+						<div className="p-5 sm:p-7 bg-white/25 backdrop-blur-2xl rounded-2xl animate-float">
+							<Image alt="Hero" src="/hero-image.png" width={400} height={320} className="rounded-2xl shadow-lg w-full max-w-sm sm:max-w-md lg:max-w-lg" />
 						</div>
 					</div>
-				</motion.div>
+				</div>
 			</section>
 
 			{/* Features Grid */}
-			<section className="px-6 py-20">
-				<div className="mx-auto max-w-6xl text-center">
-					<motion.h2
-						{...fadeUp(0.1)}
-						className="text-4xl text-text-primary font-bold sm:text-5xl"
-					>
+			<section id="features" className="px-6 py-20">
+				<ScrollRevealSection className="mx-auto max-w-6xl text-center">
+					<AnimatedElement as="h2" className="text-4xl text-text-primary font-bold sm:text-5xl" data-reveal variant="fadeInUp">
 						Comprehensive Mental Health Solutions
-					</motion.h2>
-					<motion.p {...fadeUp(0.2)} className="mt-2 text-lg text-text-secondary">
+					</AnimatedElement>
+					<AnimatedElement as="p" className="mt-2 text-lg text-text-secondary" data-reveal variant="fadeInUp">
 						Our integrated approach combines cutting-edge technology with human expertise to deliver personalized mental health care that adapts to your unique needs and lifestyle.
-					</motion.p>
-				</div>
+					</AnimatedElement>
+				</ScrollRevealSection>
 
 				<div className="mt-12 flex flex-wrap justify-center gap-8">
 					{features.map((feature, i) => (
-						<motion.div
-							key={feature.heading}
-							{...fadeUp(0.2 + i * 0.1)}
-							viewport={{ once: true }}
-						>
-							<Card className="h-full hover:shadow-lg transition max-w-80">
-								<CardHeader>
-									<Card className="w-fit p-4 mb-3 border border-text-accent shadow text-text-primary">
-										{feature.icon}
-									</Card>
-									<CardTitle className="text-xl sm:text-2xl">{feature.heading}</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<p className="text-text-secondary/90">{feature.subheading}</p>
-									<ul className="mt-3">
-										{feature.points.map((point, idx) => (
-											<li key={idx} className="mt-2 flex w-full items-center gap-2"><Check color="lightgreen" className="size-5 w-1/9" />
-												<p>{point}</p>
-											</li>
-										))}
-									</ul>
-								</CardContent>
-							</Card>
-						</motion.div>
+						<HoverAnimation key={feature.heading}>
+							<AnimatedElement
+								className="h-full"
+								variant="fadeInUp"
+								delay={i * 0.1}
+								duration={0.8}
+								scrollReveal
+							>
+								<Card className="h-full hover:shadow-lg transition max-w-80 ">
+									<CardHeader>
+										<Card className="w-fit p-4 border border-text-accent shadow text-text-primary">
+											{feature.icon}
+										</Card>
+										<CardTitle className="text-xl sm:text-2xl">{feature.heading}</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<p className="text-text-secondary/90">{feature.subheading}</p>
+										<ul className="mt-3">
+											{feature.points.map((point, idx) => (
+												<li key={idx} className="mt-2 flex w-full items-center gap-2"><Check color="lightgreen" className="size-5 w-1/9" />
+													<p>{point}</p>
+												</li>
+											))}
+										</ul>
+									</CardContent>
+								</Card>
+							</AnimatedElement>
+						</HoverAnimation>
 					))}
 				</div>
 			</section>
 
 			{/* Product Explanation Section */}
 			<section className=" px-6 py-20">
-				<div className="mx-auto max-w-6xl text-center">
-					<motion.h2
-						{...fadeUp(0.1)}
-						className="text-4xl text-text-primary font-bold sm:text-5xl"
-					>
+				<ScrollRevealSection className="mx-auto max-w-6xl text-center">
+					<AnimatedElement as="h2" className="text-4xl text-text-primary font-bold sm:text-5xl" data-reveal variant="fadeInUp">
 						Specialized Therapy Areas
-					</motion.h2>
-					<motion.p {...fadeUp(0.2)} className="mt-2 text-lg text-text-secondary">
+					</AnimatedElement>
+					<AnimatedElement as="p" className="mt-2 text-lg text-text-secondary" data-reveal variant="fadeInUp">
 						Our expert therapists specialize in various mental health conditions and therapeutic approaches, ensuring you receive the most effective treatment for your specific needs.
-					</motion.p>
-				</div>
+					</AnimatedElement>
+				</ScrollRevealSection>
 
 				<div className="mt-12 flex flex-wrap justify-center gap-8">
 					{more.map((feature, i) => (
-						<motion.div
-							key={feature.heading}
-							{...fadeUp(0.2 + i * 0.1)}
-							viewport={{ once: true }}
-						>
-							<Card className="h-full hover:shadow-lg transition max-w-96">
-								<CardHeader className="flex flex-row w-full items-center justify-baseline gap-4">
-									<Card className="w-fit p-4 border border-text-accent shadow text-text-primary">
-										{feature.icon}
-									</Card>
-									<CardTitle className="text-xl sm:text-2xl">{feature.heading}</CardTitle>
-								</CardHeader>
-								<CardContent className="*:space-y-3">
-									<p className="text-text-secondary/90">{feature.subheading}</p>
-									<ul className="mt-3">
-										{feature.points.map((point, idx) => (
-											<li key={idx} className="mt-2 flex w-full items-center gap-2"><Check color="lightgreen" className="size-5 w-1/9" />
-												<p>{point}</p>
-											</li>
-										))}
-									</ul>
-								</CardContent>
-							</Card>
-						</motion.div>
+						<HoverAnimation key={feature.heading}>
+							<AnimatedElement
+								className="h-full"
+								variant="fadeInUp"
+								delay={i * 0.15}
+								duration={0.8}
+								scrollReveal
+							>
+								<Card className="h-full hover:shadow-lg transition max-w-96">
+									<CardHeader className="flex flex-row w-full items-center justify-baseline gap-4">
+										<Card className="w-fit p-4 border border-text-accent shadow text-text-primary">
+											{feature.icon}
+										</Card>
+										<CardTitle className="text-xl sm:text-2xl">{feature.heading}</CardTitle>
+									</CardHeader>
+									<CardContent className="*:space-y-3">
+										<p className="text-text-secondary/90">{feature.subheading}</p>
+										<ul className="mt-3">
+											{feature.points.map((point, idx) => (
+												<li key={idx} className="mt-2 flex w-full items-center gap-2"><Check color="lightgreen" className="size-5 w-1/9" />
+													<p>{point}</p>
+												</li>
+											))}
+										</ul>
+									</CardContent>
+								</Card>
+							</AnimatedElement>
+						</HoverAnimation>
 					))}
 				</div>
 			</section>
@@ -276,7 +278,7 @@ export default function HomePage() {
 					>
 						Trusted by Professionals & Teams
 					</motion.h2>
-					<motion.p {...fadeUp(0.2)} className="mt-2 text-gray-600">
+					<motion.p {...fadeUp(0.2)} className="mt-2 text-text-secondary">
 						Hear what our users say.
 					</motion.p>
 				</div>
@@ -312,25 +314,18 @@ export default function HomePage() {
 
 			{/* CTA Section */}
 			<section className="relative py-20 text-white text-center">
-				<motion.h3
-					{...fadeUp(0.1)}
-					className="text-3xl font-semibold"
-				>
+				<AnimatedElement as="h3" className="text-3xl font-semibold" variant="fadeInUp" delay={0.1}>
 					Ready to Elevate Your Experience?
-				</motion.h3>
-				<motion.p {...fadeUp(0.2)} className="mt-4 text-lg">
+				</AnimatedElement>
+				<AnimatedElement as="p" className="mt-4 text-lg" variant="fadeInUp" delay={0.2}>
 					Join thousands of users who trust us for seamless digital well-being
 					and collaboration.
-				</motion.p>
-				<motion.div {...fadeUp(0.3)} className="mt-8">
-					<Link href="/register">
-						<Button
-							size="lg"
-						>
-							Get Started Now
-						</Button>
-					</Link>
-				</motion.div>
+				</AnimatedElement>
+				<AnimatedElement as="div" className="mt-8" variant="fadeInUp" delay={0.3}>
+					<Button size="lg" onClick={handleGetStarted}>
+						Get Started Now
+					</Button>
+				</AnimatedElement>
 			</section>
 		</div>
 	);

@@ -47,8 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setLoading(true);
 		try {
 			const response = await authService.login(credentials);
-			setUser({ ...response.user, role: (response.user.role === 'anonymous' ? 'student' : response.user.role) });
-			// setUser(response.user);
+			setUser(response.user);
 		} catch (error) {
 			throw error;
 		} finally {
@@ -61,7 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		try {
 			const response = await authService.loginAnon();
 			console.log("Anonymous login response:", response);
-			setUser({ ...response.user, role: (response.user.role === 'anonymous' ? 'student' : response.user.role) });
+			setUser(response.user);
 		} catch (error) {
 			throw error;
 		} finally {
@@ -73,9 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		setLoading(true);
 		try {
 			const response = await authService.signup(credentials);
-			// setUser(response.user);
-			setUser({ ...response.user, role: (response.user.role === 'anonymous' ? 'student' : response.user.role) });
-
+			setUser(response.user);
 		} catch (error) {
 			throw error;
 		} finally {

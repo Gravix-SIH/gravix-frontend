@@ -49,46 +49,49 @@
 }
 
 :root {
-	--radius: 0.625rem;
-	--background-light: #e0c5ff;
-	--background-dark: #9967FE;
-	--foreground: #E1E1E1;
-	--card: #FFFFFF;
-	--card-foreground: #000000;
+	--radius: 1.5rem;
+	/* Premium Claymorphism - Rich, warm palette with enhanced depth */
+	--background-light: #FFF8F0;
+	--background-dark: #F5E6D8;
+	--foreground: #FFFCF9;
+	--card: #FFFAF6;
+	--card-foreground: #2D251F;
 
-	--text-primary: #FFFFFF;
-	--text-secondary: #E1E1E1;
-	--text-accent: #E1E1E1;
+	/* Rich clay tones */
+	--text-primary: #2D251F;
+	--text-secondary: #7A6B5F;
+	--text-accent: #E8915D;
 
-	--popover: #FFFFFF;
-	--popover-foreground: #000000;
-	--primary: #4F46E5;
-	--primary-foreground: #FFFFFF;
-	--secondary: #4F46E5;
-	--secondary-foreground: #FFFFFF;
-	--muted: #E1E1E1;
-	--muted-foreground: #000000;
-	--accent: #E1E1E1;
-	--accent-foreground: #000000;
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.923 0.003 48.717);
-	--input: oklch(0.923 0.003 48.717);
-	--ring: oklch(0.709 0.01 56.259);
+	/* Premium warm tones with more saturation */
+	--popover: #FFF8F4;
+	--popover-foreground: #2D251F;
+	--primary: #E67A4D;
+	--primary-foreground: #FEFDFB;
+	--secondary: #C9A881;
+	--secondary-foreground: #FEFDFB;
+	--muted: #EDD4C4;
+	--muted-foreground: #4D3F38;
+	--accent: #F0A368;
+	--accent-foreground: #FEFDFB;
+	--destructive: #D65C5C;
+	--border: #E8D0C0;
+	--input: #FFF8F4;
+	--ring: #E67A4D;
 
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
+	--chart-1: #E67A4D;
+	--chart-2: #C9A881;
+	--chart-3: #F0A368;
+	--chart-4: #E8B89E;
+	--chart-5: #D4A882;
 
-	--sidebar: oklch(0.985 0.001 106.423);
-	--sidebar-foreground: oklch(0.147 0.004 49.25);
-	--sidebar-primary: oklch(0.216 0.006 56.043);
-	--sidebar-primary-foreground: oklch(0.985 0.001 106.423);
-	--sidebar-accent: oklch(0.97 0.001 106.424);
-	--sidebar-accent-foreground: oklch(0.216 0.006 56.043);
-	--sidebar-border: oklch(0.923 0.003 48.717);
-	--sidebar-ring: oklch(0.709 0.01 56.259);
+	--sidebar: #FEFBF6;
+	--sidebar-foreground: #2D251F;
+	--sidebar-primary: #E67A4D;
+	--sidebar-primary-foreground: #FEFDFB;
+	--sidebar-accent: #E8D0C0;
+	--sidebar-accent-foreground: #2D251F;
+	--sidebar-border: #E8D0C0;
+	--sidebar-ring: #E67A4D;
 
 	--animation-float: float 4s ease-in-out infinite;
 }
@@ -104,16 +107,131 @@
 }
 
 .background-gradient {
-	background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 50%);
+	background: 
+		radial-gradient(circle at 15% 30%, rgba(230, 122, 77, 0.12) 0%, transparent 40%),
+		radial-gradient(circle at 85% 70%, rgba(200, 168, 129, 0.1) 0%, transparent 45%),
+		linear-gradient(135deg, #FFF8F0 0%, #F5E6D8 60%, #EDD9CA 100%);
+	position: relative;
+	/* Clay texture effect */
+	background-attachment: fixed;
 }
 
 .background-gradient-rev {
-	background: linear-gradient(0deg, var(--color-background-light) 0%, var(--color-background-dark) 50%);
+	background: 
+		radial-gradient(circle at 85% 40%, rgba(240, 163, 104, 0.12) 0%, transparent 40%),
+		radial-gradient(circle at 15% 80%, rgba(230, 122, 77, 0.1) 0%, transparent 45%),
+		linear-gradient(315deg, #FFF8F0 0%, #F5E6D8 60%, #EDD9CA 100%);
+	position: relative;
+	background-attachment: fixed;
+}
+
+/* Ultra 3D clay shadows with embossed effect */
+.clay-shadow-sm {
+	box-shadow: 
+		0 2px 4px rgba(45, 37, 31, 0.08),
+		0 1px 2px rgba(45, 37, 31, 0.05),
+		inset 0 1px 1px rgba(255, 255, 255, 0.6),
+		inset 0 -1px 1px rgba(45, 37, 31, 0.03);
+}
+
+.clay-shadow-md {
+	box-shadow: 
+		0 6px 12px rgba(45, 37, 31, 0.1),
+		0 12px 24px rgba(45, 37, 31, 0.08),
+		0 0 2px rgba(230, 122, 77, 0.08),
+		inset 0 2px 3px rgba(255, 255, 255, 0.7),
+		inset 0 -2px 3px rgba(45, 37, 31, 0.04);
+}
+
+.clay-shadow-lg {
+	box-shadow: 
+		0 8px 16px rgba(45, 37, 31, 0.12),
+		0 16px 32px rgba(45, 37, 31, 0.1),
+		0 0 3px rgba(230, 122, 77, 0.12),
+		inset 0 3px 5px rgba(255, 255, 255, 0.75),
+		inset 0 -3px 5px rgba(45, 37, 31, 0.05);
+}
+
+.clay-shadow-xl {
+	box-shadow: 
+		0 12px 24px rgba(45, 37, 31, 0.14),
+		0 24px 48px rgba(45, 37, 31, 0.12),
+		0 0 4px rgba(230, 122, 77, 0.15),
+		inset 0 4px 8px rgba(255, 255, 255, 0.8),
+		inset 0 -4px 8px rgba(45, 37, 31, 0.06);
+}
+
+/* Inset clay effect (pressed/recessed) */
+.clay-inset {
+	box-shadow: 
+		inset 0 3px 6px rgba(45, 37, 31, 0.15),
+		inset 0 1px 3px rgba(45, 37, 31, 0.1),
+		inset 0 -1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Raised clay effect (embossed) */
+.clay-raised {
+	box-shadow: 
+		0 4px 8px rgba(45, 37, 31, 0.1),
+		0 8px 16px rgba(45, 37, 31, 0.08),
+		inset 0 2px 4px rgba(255, 255, 255, 0.8),
+		inset 0 -2px 4px rgba(45, 37, 31, 0.04);
+}
+
+/* Premium clay light effect with 3D gradients */
+.clay-light-effect {
+	position: relative;
+	overflow: hidden;
+}
+
+.clay-light-effect::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 65%;
+	background: 
+		linear-gradient(180deg, 
+			rgba(255, 255, 255, 0.6) 0%, 
+			rgba(255, 255, 255, 0.3) 40%, 
+			rgba(255, 255, 255, 0.1) 70%, 
+			transparent 100%);
+	pointer-events: none;
+	border-radius: inherit;
+	z-index: 1;
+}
+
+/* Enhanced clay depth effect - Ultra 3D appearance */
+.clay-depth {
+	position: relative;
+}
+
+.clay-depth::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: 
+		linear-gradient(145deg, 
+			rgba(255, 255, 255, 0.3) 0%, 
+			transparent 50%, 
+			rgba(45, 37, 31, 0.04) 100%);
+	border-radius: inherit;
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* 3D Beveled edge effect */
+.clay-bevel {
+	position: relative;
+	border-top: 1px solid rgba(255, 255, 255, 0.4);
+	border-left: 1px solid rgba(255, 255, 255, 0.3);
+	border-bottom: 1px solid rgba(45, 37, 31, 0.08);
+	border-right: 1px solid rgba(45, 37, 31, 0.06);
 }
 
 /* slow and small up down movement amination */
 @keyframes float {
-
 	0%,
 	100% {
 		transform: translateY(0);
@@ -124,5 +242,214 @@
 	}
 }
 
+/* Clay pulse effect */
+@keyframes clayPulse {
+	0%,
+	100% {
+		box-shadow: 0 4px 12px rgba(45, 37, 31, 0.08), 0 0 0 0 rgba(230, 122, 77, 0);
+	}
+	50% {
+		box-shadow: 0 4px 20px rgba(45, 37, 31, 0.12), 0 0 0 8px rgba(230, 122, 77, 0);
+	}
+}
 
-/* #BF78ADA */
+/* Clay glow effect */
+@keyframes clayGlow {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 0px rgba(230, 122, 77, 0));
+	}
+	50% {
+		filter: drop-shadow(0 0 12px rgba(230, 122, 77, 0.3));
+	}
+}
+
+/* GSAP & Lenis Optimizations */
+html {
+	scroll-behavior: auto; /* Lenis handles scrolling */
+}
+
+/* Smooth scroll reveal animations */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeInDown {
+	from {
+		opacity: 0;
+		transform: translateY(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes slideInLeft {
+	from {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* Parallax optimization */
+[data-parallax] {
+	will-change: transform;
+	transform: translate3d(0, 0, 0);
+}
+
+/* Animated element optimization */
+[data-animated] {
+	will-change: opacity, transform;
+	transform: translate3d(0, 0, 0);
+}
+
+/* Smooth scroll progress bar */
+#scroll-progress-bar {
+	will-change: width;
+	transition: width 0.2s ease-out;
+}
+
+/* Clay interactive animation utilities */
+.clay-pulse {
+	animation: clayPulse 2s ease-in-out infinite;
+}
+
+.clay-glow {
+	animation: clayGlow 3s ease-in-out infinite;
+}
+
+.clay-hover {
+	transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.clay-hover:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 32px rgba(45, 37, 31, 0.15), 0 0 1px rgba(230, 122, 77, 0.2);
+}
+
+/* Reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* GPU acceleration for better performance */
+.gpu-accelerated {
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+}
+
+/* Animation timing functions */
+.ease-gentle {
+	--tw-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ease-bounce {
+	--tw-transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ease-elastic {
+	--tw-transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Premium claymorphism interactive states */
+@layer components {
+	.clay-card-hover {
+		@apply transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01];
+		@apply hover:shadow-[0_16px_40px_rgba(45,37,31,0.16),0_8px_16px_rgba(45,37,31,0.12),inset_0_4px_8px_rgba(255,255,255,0.85)];
+	}
+
+	.clay-button {
+		@apply relative overflow-hidden;
+	}
+
+	.clay-button::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: -100%;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+		transition: left 0.6s ease;
+		z-index: 1;
+	}
+
+	.clay-button:hover::before {
+		left: 100%;
+	}
+
+	.clay-input-focus {
+		@apply ring-4 ring-primary/30 ring-offset-4 ring-offset-background-light;
+	}
+
+	/* 3D Press effect */
+	.clay-press {
+		@apply active:scale-95 active:shadow-[inset_0_3px_8px_rgba(45,37,31,0.2)];
+	}
+
+	/* 3D Float effect */
+	.clay-float {
+		@apply hover:-translate-y-2 hover:shadow-[0_16px_32px_rgba(45,37,31,0.14),inset_0_3px_6px_rgba(255,255,255,0.8)];
+		@apply transition-all duration-300 ease-out;
+	}
+
+	/* Embossed text effect */
+	.clay-text-emboss {
+		text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8), 0 -1px 1px rgba(45, 37, 31, 0.1);
+	}
+
+	/* Debossed/Engraved text effect */
+	.clay-text-deboss {
+		text-shadow: 0 -1px 1px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(45, 37, 31, 0.3);
+	}
+}

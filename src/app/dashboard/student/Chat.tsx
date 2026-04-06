@@ -121,7 +121,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 	const createNewChat = async () => {
 		try {
 			// Create new session via API
-			const newSessionResponse = await chatService.newChat(user?.is_anonymous ? user.anonId : undefined);
+			const newSessionResponse = await chatService.newChat(user?.is_anonymous ? user.anon_id : undefined);
 
 			const newSession: ChatSession = {
 				id: newSessionResponse.session_id,
@@ -260,7 +260,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 	// Loading state
 	if (isLoading) {
 		return (
-			<div className="flex h-full max-h-[92vh] items-center justify-center">
+			<div className="flex h-full items-center justify-center">
 				<div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900">
 					<LoaderPinwheel className='animate-spin' />
 				</div>
@@ -271,11 +271,11 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 	// Error state
 	if (error && sessions.length === 0) {
 		return (
-			<div className="flex h-full max-h-[92vh] items-center justify-center">
+			<div className="flex h-full items-center justify-center">
 				<div className="text-center max-w-md">
 					<AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
 					<h3 className="text-lg font-semibold text-gray-800 mb-2">Connection Error</h3>
-					<p className="text-gray-600 mb-4">{error}</p>
+					<p className="text-text-secondary mb-4">{error}</p>
 					<Button onClick={loadSessions} className="bg-gradient-to-r from-purple-500 to-indigo-500">
 						Try Again
 					</Button>
@@ -285,7 +285,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 	}
 
 	return (
-		<div className="flex h-full max-h-[91vh]">
+		<div className="flex h-full">
 			<AlertDialog open={showCrisisAlert} onOpenChange={setShowCrisisAlert}>
 				<AlertDialogContent className="bg-background-dark/30 backdrop-blur-lg border border-red-300">
 					<AlertDialogHeader>
@@ -327,19 +327,19 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 							>
 								<div className="flex-1 min-w-0">
 									<div className="flex items-center mb-1">
-										<MessageCircle className="w-4 h-4 mr-2 text-gray-500" />
+										<MessageCircle className="w-4 h-4 mr-2 text-text-secondary" />
 										<h3 className="text-sm font-medium truncate text-gray-700">
 											{session.title}
 										</h3>
 									</div>
-									<p className="text-xs text-gray-500">
+									<p className="text-xs text-text-secondary">
 										{formatDate(session.last_active)} • {session.messages.length} messages
 									</p>
 								</div>
 								<Button
 									size="sm"
 									variant="ghost"
-									className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 p-1"
+									className="opacity-0 group-hover:opacity-100 transition-opacity text-text-secondary hover:text-red-500 p-1"
 									onClick={(e) => {
 										e.stopPropagation();
 										deleteSession(session.id);
@@ -363,7 +363,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 								variant="ghost"
 								size="sm"
 								onClick={() => setSidebarOpen(!sidebarOpen)}
-								className="mr-3 text-gray-600"
+								className="mr-3 text-text-secondary"
 							>
 								<History className="w-5 h-5" />
 							</Button>
@@ -378,7 +378,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 				<div className="flex-1 overflow-y-auto p-6 space-y-4">
 					{currentSession?.messages.length === 0 && (
 						<div className="flex justify-center items-center h-full">
-							<div className="text-center text-gray-600">
+							<div className="text-center text-text-secondary">
 								<MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
 								<p className="text-lg font-medium mb-2">Start a conversation</p>
 								<p className="text-sm">Send a message to begin chatting with your AI assistant</p>
@@ -399,7 +399,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 									<ReactMarkdown>{message.text}</ReactMarkdown>
 								</p>
 								<div className="flex items-center justify-between mt-1">
-									<p className={`text-xs ${message.role === "user" ? "text-purple-100" : "text-gray-400"
+									<p className={`text-xs ${message.role === "user" ? "text-purple-100" : "text-text-secondary"
 										}`}>
 										{message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
 									</p>
@@ -447,7 +447,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 							</Button>
 						</div>
 					</div>
-					<p className="text-xs text-gray-500 mt-2 text-center">
+					<p className="text-xs text-text-secondary mt-2 text-center">
 						Press Enter to send
 					</p>
 				</div>

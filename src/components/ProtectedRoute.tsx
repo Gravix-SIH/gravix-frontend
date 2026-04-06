@@ -6,17 +6,24 @@ import { LoaderPinwheel } from 'lucide-react';
 interface ProtectedRouteProps {
 	children: ReactNode;
 	redirectTo?: string;
+	requireAdmin?: boolean;
 }
 
-export function ProtectedRoute({ children, redirectTo = '/login' }: ProtectedRouteProps) {
+export function ProtectedRoute({
+	children,
+	redirectTo = '/login',
+	requireAdmin = false,
+}: ProtectedRouteProps) {
 	const { user, loading } = useAuth();
 	const router = useRouter();
 
 	useEffect(() => {
 		if (!loading && !user) {
 			router.push(redirectTo);
+		} else if (!loading && user && requireAdmin && user.role !== 'admin') {
+			router.push('/');
 		}
-	}, [user, loading, router, redirectTo]);
+	}, [user, loading, router, redirectTo, requireAdmin]);
 
 	if (loading) {
 		return (
@@ -29,6 +36,10 @@ export function ProtectedRoute({ children, redirectTo = '/login' }: ProtectedRou
 	}
 
 	if (!user) {
+		return null;
+	}
+
+	if (requireAdmin && user.role !== 'admin') {
 		return null;
 	}
 

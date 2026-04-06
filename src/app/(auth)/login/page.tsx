@@ -21,7 +21,7 @@ const loginSchema = z.object({
 });
 type loginFormValues = z.infer<typeof loginSchema>;
 const LoginPage: FC = () => {
-	const { login, loginAnonymous, checkInitialAuth, loading } = useAuth();
+	const { login, loginAnonymous, checkInitialAuth, loading, user } = useAuth();
 	const router = useRouter();
 	const form = useForm<loginFormValues>({
 		resolver: zodResolver(loginSchema),
@@ -31,9 +31,17 @@ const LoginPage: FC = () => {
 		},
 	});
 
+	const getDashboardLink = () => {
+		return '/dashboard';
+	};
+
 	useEffect(() => {
+		if (user) {
+			router.replace(getDashboardLink());
+			return;
+		}
 		checkInitialAuth();
-	}, [checkInitialAuth]);
+	}, [user, checkInitialAuth, router]);
 
 	async function onSubmit(values: loginFormValues) {
 		try {
@@ -62,12 +70,12 @@ const LoginPage: FC = () => {
 	}
 
 	return (
-		<div className="flex items-center justify-center min-h-screen">
-			<div className="absolute w-full h-screen pointer-events-none">
-				<Image alt="BG" src={"/auth-bg.png"} width={1024} height={720} className="h-full aspect-video w-full" />
+		<div className="flex items-center justify-center min-h-screen p-4">
+			<div className="absolute inset-0 pointer-events-none">
+				<Image alt="BG" src={"/auth-bg.png"} width={1024} height={720} className="h-full w-full object-cover" />
 			</div>
-			<Card className="w-full max-w-md p-8 border-black/5 shadow-xl !bg-black/10 space-y-6">
-				<h1 className="text-3xl font-bold text-center">Login</h1>
+			<Card className="w-full max-w-md p-6 sm:p-8 border-black/5 shadow-xl !bg-black/10 space-y-6">
+				<h1 className="text-3xl font-bold text-center text-text-primary">Login</h1>
 
 				<Form {...form}>
 
@@ -77,7 +85,7 @@ const LoginPage: FC = () => {
 							name="email"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Email</FormLabel>
+									<FormLabel className="text-text-primary">Email</FormLabel>
 									<FormControl>
 										<Input placeholder="you@example.com" type="email" {...field} />
 									</FormControl>
@@ -91,7 +99,7 @@ const LoginPage: FC = () => {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Password</FormLabel>
+									<FormLabel className="text-text-primary">Password</FormLabel>
 									<FormControl>
 										<Input placeholder="••••••••" type="password" {...field} />
 									</FormControl>
@@ -99,17 +107,17 @@ const LoginPage: FC = () => {
 								</FormItem>
 							)}
 						/>
-						
+
 						<p className="mt-2 text-center text-sm text-text-secondary">
 							Create an account?{" "}
-							<Link href="/register" className="text-background-light hover:underline">
+							<Link href="/register" className="text-primary hover:underline">
 								Register
 							</Link>
 						</p>
 						<Button
 							variant="default"
 							type="submit"
-							className="w-full bg-background-light/25 !hover:bg-background-light/10"
+							className="w-full !hover:bg-background-light/10"
 							disabled={loading}
 						>
 							Login

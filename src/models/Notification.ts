@@ -1,4 +1,4 @@
-export type NotificationType = "booking" | "assessment" | "forum" | "system";
+export type NotificationType = "booking" | "assessment" | "system";
 
 export interface Notification {
 	id: string;

@@ -34,7 +34,7 @@ const signupSchema = z.object({
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
-	const { loading, signup, checkInitialAuth } = useAuth();
+	const { loading, signup, checkInitialAuth, user } = useAuth();
 	const router = useRouter();
 	const form = useForm<SignupFormValues>({
 		resolver: zodResolver(signupSchema),
@@ -46,9 +46,17 @@ export default function SignupPage() {
 		},
 	});
 
+	const getDashboardLink = () => {
+		return '/dashboard';
+	};
+
 	useEffect(() => {
+		if (user) {
+			router.replace(getDashboardLink());
+			return;
+		}
 		checkInitialAuth();
-	}, [checkInitialAuth]);
+	}, [user, checkInitialAuth, router]);
 
 	async function onSubmit(values: SignupFormValues) {
 		try {
@@ -65,11 +73,11 @@ export default function SignupPage() {
 	}
 
 	return (
-		<div className="flex min-h-screen items-center justify-center x-4">
-			<div className="absolute w-full h-screen pointer-events-none">
-				<Image alt="BG" src={"/auth-bg.png"} width={1024} height={720} className="h-full aspect-video w-full" />
+		<div className="flex min-h-screen items-center justify-center p-4">
+			<div className="absolute inset-0 pointer-events-none">
+				<Image alt="BG" src={"/auth-bg.png"} width={1024} height={720} className="h-full w-full object-cover" />
 			</div>
-			<Card className="w-full max-w-md p-8 border-black/5 shadow-xl !bg-black/10 space-y-6">
+			<Card className="w-full max-w-md p-6 sm:p-8 border-black/5 shadow-xl !bg-black/10 space-y-6">
 				<h1 className="text-3xl font-bold text-center text-text-secondary">
 					Create an Account
 				</h1>
@@ -81,7 +89,7 @@ export default function SignupPage() {
 							name="name"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Full Name</FormLabel>
+									<FormLabel className="text-text-primary">Full Name</FormLabel>
 									<FormControl>
 										<Input placeholder="John Doe" {...field} />
 									</FormControl>
@@ -95,7 +103,7 @@ export default function SignupPage() {
 							name="email"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Email</FormLabel>
+									<FormLabel className="text-text-primary">Email</FormLabel>
 									<FormControl>
 										<Input placeholder="you@example.com" type="email" {...field} />
 									</FormControl>
@@ -109,7 +117,7 @@ export default function SignupPage() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Password</FormLabel>
+									<FormLabel className="text-text-primary">Password</FormLabel>
 									<FormControl>
 										<Input placeholder="••••••••" type="password" {...field} />
 									</FormControl>
@@ -123,10 +131,10 @@ export default function SignupPage() {
 							name="role"
 							render={({ field }) => (
 								<FormItem className="flex items-center justify-between">
-									<FormLabel>Are you a Counsellor?</FormLabel>
+									<FormLabel className="text-text-primary">Are you a Counsellor?</FormLabel>
 									<FormControl>
 										<Switch
-											className="w-10 h-6"
+											className="w-10 h-6 border border-primary"
 											checked={field.value === "counsellor"}
 											onCheckedChange={(checked) =>
 												field.onChange(checked ? "counsellor" : "student")
@@ -140,7 +148,7 @@ export default function SignupPage() {
 
 						<p className="mt-2 text-center text-sm text-text-primary">
 							Already have an account?{" "}
-							<Link href="/login" className="text-background-light hover:underline">
+							<Link href="/login" className="text-primary hover:underline">
 								Login
 							</Link>
 						</p>

@@ -1,5 +1,8 @@
+'use client';
+
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import { ScrollProgressBar, ScrollIndicator } from "@/components/animations/ScrollIndicators";
 import React from "react";
 
 export default function RootLayout({
@@ -8,12 +11,14 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<div className="max-h-screen background-gradient">
+		<div className="min-h-screen background-gradient flex flex-col">
+			<ScrollProgressBar className="bg-gradient-to-r from-primary via-accent to-secondary" />
 			<Navbar />
-			<div className="h-screen overflow-auto">
+			<main className="flex-1 overflow-hidden w-full">
 				{children}
 				<Footer />
-			</div>
+			</main>
+			<ScrollIndicator show={true} />
 		</div>
 	);
 }

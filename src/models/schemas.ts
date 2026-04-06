@@ -2,15 +2,16 @@ import { z } from "zod";
 
 /* ---------------- User ---------------- */
 export const UserSchema = z.object({
-	uid: z.string(),
-	anonId: z.string(),
-	email: z.string().email(),
+	id: z.string(),
+	email: z.string().email().nullable(),
 	name: z.string(),
 	department: z.string().optional(),
 	is_anonymous: z.boolean().default(false),
 	role: z.enum(["student", "counsellor", "admin"]),
-	created_at: z.date(),
-	updated_at: z.date(),
+	anon_id: z.string().optional(),
+	is_active: z.boolean().default(true),
+	created_at: z.string().or(z.date()),
+	updated_at: z.string().or(z.date()),
 });
 export type User = z.infer<typeof UserSchema>;
 
@@ -60,30 +61,6 @@ export const BookingSchema = z.object({
 });
 export type Booking = z.infer<typeof BookingSchema>;
 
-/* ---------------- ForumPost ---------------- */
-export const ForumPostSchema = z.object({
-	id: z.string(),
-	authorId: z.string(),
-	title: z.string(),
-	content: z.string(),
-	tags: z.array(z.string()).optional(),
-	createdAt: z.date(),
-	updatedAt: z.date().optional(),
-	upvotes: z.number(),
-});
-export type ForumPost = z.infer<typeof ForumPostSchema>;
-
-/* ---------------- ForumComment ---------------- */
-export const ForumCommentSchema = z.object({
-	id: z.string(),
-	postId: z.string(),
-	authorId: z.string(),
-	content: z.string(),
-	createdAt: z.date(),
-	upvotes: z.number(),
-});
-export type ForumComment = z.infer<typeof ForumCommentSchema>;
-
 /* ---------------- Resource ---------------- */
 export const ResourceSchema = z.object({
 	id: z.string(),
@@ -99,7 +76,7 @@ export type Resource = z.infer<typeof ResourceSchema>;
 export const NotificationSchema = z.object({
 	id: z.string(),
 	userId: z.string(),
-	type: z.enum(["booking", "assessment", "forum", "system"]),
+	type: z.enum(["booking", "assessment", "system"]),
 	message: z.string(),
 	read: z.boolean(),
 	createdAt: z.date(),

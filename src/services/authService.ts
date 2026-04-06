@@ -47,7 +47,7 @@ class AuthService {
 		}
 
 		const response = await apiService.post<{ access: string }>(
-			'/auth/token/refresh/',
+			'/refresh',
 			{ refresh: refreshToken },
 			false
 		);
