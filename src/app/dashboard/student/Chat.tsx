@@ -65,41 +65,42 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 				// Create a default session if none exist
 				await createNewChat();
 			} else {
-				// Convert API sessions to local format and load conversations
-				const loadedSessions = await Promise.all(
-					historyResponse.sessions.map(async (apiSession) => {
-						try {
-							const conversationResponse = await chatService.getConversationHistory(apiSession.session_id);
+				// Convert API sessions to local format and load conversations sequentially
+				const loadedSessions: ChatSession[] = [];
 
-							const messages: Message[] = conversationResponse.conversations.map(conv => ({
-								role: conv.sender === 'user' ? 'user' : 'bot',
-								text: conv.message,
-								timestamp: new Date(conv.timestamp),
-								mood: conv.mood
-							}));
+				for (const apiSession of historyResponse.sessions) {
+					try {
+						const conversationResponse = await chatService.getConversationHistory(apiSession.session_id);
 
-							return {
-								id: apiSession.session_id,
-								title: apiSession.title,
-								messages,
-								created_at: new Date(apiSession.created_at),
-								last_active: messages.length > 0 ?
-									new Date(Math.max(...messages.map(m => m.timestamp.getTime()))) :
-									new Date(apiSession.created_at)
-							};
-						} catch (error) {
-							console.error(`Failed to load conversation for session ${apiSession.session_id}:`, error);
-							// Return session with empty messages if conversation fails to load
-							return {
-								id: apiSession.session_id,
-								title: apiSession.title,
-								messages: [],
-								created_at: new Date(apiSession.created_at),
-								last_active: new Date(apiSession.created_at)
-							};
-						}
-					})
-				);
+						const messages: Message[] = conversationResponse.conversations.map(conv => ({
+							role: conv.sender === 'user' ? 'user' : 'bot',
+							text: conv.message,
+							timestamp: new Date(conv.timestamp),
+							mood: conv.mood
+						}));
+
+						loadedSessions.push({
+							id: apiSession.session_id,
+							title: apiSession.title,
+							messages,
+							created_at: new Date(apiSession.created_at),
+							last_active: new Date(apiSession.last_active)
+						});
+					} catch (error) {
+						console.error(`Failed to load conversation for session ${apiSession.session_id}:`, error);
+						// Push session with empty messages if conversation fails to load
+						loadedSessions.push({
+							id: apiSession.session_id,
+							title: apiSession.title,
+							messages: [],
+							created_at: new Date(apiSession.created_at),
+							last_active: new Date(apiSession.last_active)
+						});
+					}
+				}
+
+				// Sort sessions by last_active descending (most recent first)
+				loadedSessions.sort((a, b) => b.last_active.getTime() - a.last_active.getTime());
 
 				setSessions(loadedSessions);
 				if (loadedSessions.length > 0) {
@@ -143,11 +144,14 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 
 	const deleteSession = async (sessionId: string) => {
 		try {
-			// Note: The API doesn't have a delete endpoint, so we only remove locally
-			setSessions(prev => prev.filter(s => s.id !== sessionId));
+			// Call backend to delete session
+			await chatService.deleteSession(sessionId);
+
+			// Remove from local state
+			const remainingSessions = sessions.filter(s => s.id !== sessionId);
+			setSessions(remainingSessions);
 
 			if (currentSessionId === sessionId) {
-				const remainingSessions = sessions.filter(s => s.id !== sessionId);
 				if (remainingSessions.length > 0) {
 					setCurrentSessionId(remainingSessions[0].id);
 				} else {
@@ -197,10 +201,11 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 
 			const botMessage: Message = {
 				role: "bot",
-				text: response.response,
+				text: response.reply,
 				timestamp: new Date(),
-				mood: response.mood_detected
+				mood: response.emotion
 			};
+
 
 			// Update with bot response
 			setSessions(prev => prev.map(session =>
@@ -210,13 +215,13 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 			));
 
 			// Handle crisis detection
-			if (response.crisis_detected) {
+			if (response.crisis) {
 				setShowCrisisAlert(true);
 			}
 
 			// Show mood detection if available
-			if (response.mood_detected) {
-				toast.info(`Mood detected: ${response.mood_detected}`, {
+			if (response.emotion) {
+				toast.info(`Mood detected: ${response.emotion}`, {
 					duration: 3000,
 				});
 			}
@@ -237,7 +242,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 		}
 	};
 
-	const handleKeyPress = (e: React.KeyboardEvent) => {
+	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			sendMessage();
@@ -391,7 +396,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 							key={index}
 							className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
 						>
-							<div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-lg ${message.role === "user"
+							<div className={`max-w-xs lg:max-w-md min-w-xs px-4 py-3 rounded-2xl shadow-lg ${message.role === "user"
 								? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-br-md"
 								: "bg-white/70 backdrop-blur-sm text-gray-700 border border-white/30 rounded-bl-md"
 								}`}>
@@ -433,7 +438,7 @@ export default function StudentChat({setShowSection}: {setShowSection: (section:
 							<Input
 								value={input}
 								onChange={(e) => setInput(e.target.value)}
-								onKeyPress={handleKeyPress}
+								onKeyDown={handleKeyDown}
 								placeholder="Type your message..."
 								className="pr-12 py-3 text-sm bg-white/50 border-white/30 !text-gray-700 rounded-2xl backdrop-blur-sm z-0 focus:bg-white/70 placeholder-black resize-none"
 								disabled={isTyping || !currentSessionId}

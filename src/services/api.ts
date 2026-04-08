@@ -72,7 +72,8 @@ class ApiService {
 	async request<T>(
 		endpoint: string,
 		options: RequestInit = {},
-		requiresAuth = true
+		requiresAuth = true,
+		timeoutMs = 30000
 	): Promise<T> {
 		const url = `${this.baseURL}${endpoint}`;
 		const headers: HeadersInit = {
@@ -91,10 +92,16 @@ class ApiService {
 			}
 		}
 
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
 		const response = await fetch(url, {
 			...options,
 			headers,
+			signal: controller.signal,
 		});
+
+		clearTimeout(timeoutId);
 
 		if (!response.ok) {
 			if (response.status === 401 && requiresAuth) {
@@ -121,6 +128,16 @@ class ApiService {
 			}
 
 			const errorData = await response.json().catch(() => ({}));
+
+			// Handle specific error status codes
+			if (response.status === 409) {
+				throw new Error('This slot has already been booked. Please select another time.');
+			}
+
+			if (response.status === 429) {
+				throw new Error('Too many requests. Please wait a moment and try again.');
+			}
+
 			throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
 		}
 
