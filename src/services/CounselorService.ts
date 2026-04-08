@@ -10,6 +10,12 @@ export interface CounselorStats {
 	recent_submissions: number;
 }
 
+export interface MeetingDetails {
+	meet_link?: string | null;
+	address?: string | null;
+	phone?: string | null;
+}
+
 export interface CounselorBooking {
 	id: string;
 	student: string;
@@ -23,6 +29,13 @@ export interface CounselorBooking {
 	session_type: "video" | "in-person" | "phone";
 	status: "pending" | "confirmed" | "cancelled" | "completed";
 	notes: string;
+	// Flat meeting details fields (from backend)
+	meeting_link?: string | null;
+	meeting_phone?: string | null;
+	meeting_address?: string | null;
+	// Nested meeting_details
+	meeting_details?: MeetingDetails | null;
+	confirmed_at?: string | null;
 	created_at: string;
 }
 
@@ -70,7 +83,7 @@ class CounselorService {
 
 	async updateBooking(
 		id: string,
-		data: { status: string }
+		data: { status?: string; meeting_link?: string | null; meeting_address?: string | null; meeting_phone?: string | null }
 	): Promise<CounselorBooking> {
 		return apiService.patch<CounselorBooking>(
 			`/counsellor/bookings/${id}/`,
