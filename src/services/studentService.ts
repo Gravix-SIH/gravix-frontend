@@ -1,5 +1,12 @@
 import { apiService } from "./api";
 
+// Meeting details for confirmed sessions
+export interface MeetingDetails {
+	meet_link?: string;
+	address?: string;
+	phone?: string;
+}
+
 // Override with concrete types
 export interface BookingResponse {
 	id: string;
@@ -11,6 +18,13 @@ export interface BookingResponse {
 	session_type: "video" | "in-person" | "phone";
 	status: "pending" | "confirmed" | "cancelled" | "completed";
 	notes?: string;
+	// Flat meeting details fields (from backend)
+	meeting_link?: string | null;
+	meeting_phone?: string | null;
+	meeting_address?: string | null;
+	// Nested meeting_details (may be used by backend)
+	meeting_details?: { meet_link?: string; address?: string; phone?: string } | null;
+	confirmed_at?: string | null;
 }
 
 export interface CounselorResponse {
@@ -51,7 +65,10 @@ class StudentService {
 	 */
 	async getUpcomingBookings(): Promise<BookingResponse[]> {
 		try {
-			const response = await apiService.get<BookingResponse[]>('/v1/student/bookings/upcoming/', true);
+			// Cache-busting: add timestamp to prevent stale cache
+			const timestamp = Date.now();
+			const response = await apiService.get<BookingResponse[]>(`/v1/student/bookings/upcoming/?t=${timestamp}`, true);
+			console.log('API Response for upcoming bookings:', JSON.stringify(response, null, 2));
 			return response;
 		} catch (error) {
 			console.error('Failed to fetch upcoming bookings:', error);
@@ -129,10 +146,63 @@ class StudentService {
 	}
 
 	/**
+	 * Get booked time slots for a counselor on a given date
+	 */
+	async getBookedSlots(counsellorId: string, date: string): Promise<string[]> {
+		try {
+			const response = await apiService.get<{times: string[]}>(
+				`/v1/student/bookings/slots/?counsellor=${counsellorId}&date=${date}`,
+				true
+			);
+			return response.times || [];
+		} catch {
+			return [];
+		}
+	}
+
+	/**
+	 * Get bookmarked resources
+	 */
+	async getBookmarkedResources(): Promise<ResourceResponse[]> {
+		try {
+			const response = await apiService.get<{ id: string; resource: ResourceResponse; created_at: string }[]>(
+				'/v1/student/resources/bookmarks/',
+				true
+			);
+			return response.map((b: { id: string; resource: ResourceResponse; created_at: string }) => b.resource);
+		} catch (error) {
+			console.error('Failed to fetch bookmarked resources:', error);
+			return [];
+		}
+	}
+
+	/**
 	 * Bookmark a resource
 	 */
 	async bookmarkResource(resourceId: string): Promise<void> {
 		await apiService.post(`/v1/student/resources/${resourceId}/bookmark/`, {}, true);
+	}
+
+	/**
+	 * Remove bookmark from a resource
+	 */
+	async removeBookmark(resourceId: string): Promise<void> {
+		await apiService.delete(`/v1/student/resources/${resourceId}/bookmark/`, true);
+	}
+
+	/**
+	 * Get student's booking counts for limit checking
+	 */
+	async getBookingCount(): Promise<{ daily: number; weekly: number }> {
+		try {
+			const response = await apiService.get<{ daily: number; weekly: number }>(
+				'/v1/student/bookings/count/',
+				true
+			);
+			return response;
+		} catch {
+			return { daily: 0, weekly: 0 };
+		}
 	}
 }
 
@@ -156,9 +226,10 @@ interface SendMessageRequest {
 }
 
 interface SendMessageResponse {
-	response: string;
-	mood_detected?: string;
-	crisis_detected?: boolean;
+	reply: string;
+	emotion?: string;
+	crisis?: boolean;
+	session_id: string;
 }
 
 interface SessionHistoryResponse {
@@ -166,6 +237,7 @@ interface SessionHistoryResponse {
 		session_id: string;
 		title: string;
 		created_at: string;
+		last_active: string;
 	}[];
 }
 
@@ -191,7 +263,7 @@ class ChatService {
 	 * Check API health status
 	 */
 	async healthCheck(): Promise<{ status: string; timestamp: string }> {
-		const response = await apiService.get<{ status: string; timestamp: string }>('/v1/chatbot/health', true);
+		const response = await apiService.get<{ status: string; timestamp: string }>('/v1/chatbot/health/', false);
 		return response;
 	}
 
@@ -203,7 +275,7 @@ class ChatService {
 		if (anonymousId) {
 			payload.anonymous_id = anonymousId;
 		}
-		const response = await apiService.post<NewChatResponse>('/v1/chatbot/chat/new/', payload, true);
+		const response = await apiService.post<NewChatResponse>('/v1/chatbot/chat/new/', payload, false);
 		return response;
 	}
 
@@ -215,7 +287,7 @@ class ChatService {
 		if (anonymousId) {
 			payload.anonymous_id = anonymousId;
 		}
-		const response = await apiService.post<SendMessageResponse>('/v1/chatbot/chat/', payload, true);
+		const response = await apiService.post<SendMessageResponse>('/v1/chatbot/chat/', payload, false);
 		return response;
 	}
 
@@ -223,7 +295,7 @@ class ChatService {
 	 * Get all chat sessions
 	 */
 	async getHistory(): Promise<SessionHistoryResponse> {
-		const response = await apiService.get<SessionHistoryResponse>('/v1/chatbot/chat/history/', true);
+		const response = await apiService.get<SessionHistoryResponse>('/v1/chatbot/chat/history/', false);
 		return response;
 	}
 
@@ -231,7 +303,7 @@ class ChatService {
 	 * Get conversation history for a session
 	 */
 	async getChat(sessionId: string): Promise<ConversationHistoryResponse> {
-		const response = await apiService.get<ConversationHistoryResponse>(`/v1/chatbot/chat/history/${sessionId}/`, true);
+		const response = await apiService.get<ConversationHistoryResponse>(`/v1/chatbot/chat/history/${sessionId}/`, false);
 		return response;
 	}
 
@@ -246,8 +318,15 @@ class ChatService {
 	 * Get mood summary for a session
 	 */
 	async getMoodSummary(sessionId: string): Promise<MoodSummaryResponse> {
-		const response = await apiService.get<MoodSummaryResponse>(`/v1/chatbot/chat/mood/${sessionId}`, true);
+		const response = await apiService.get<MoodSummaryResponse>(`/v1/chatbot/chat/mood/${sessionId}/`, false);
 		return response;
+	}
+
+	/**
+	 * Delete a chat session
+	 */
+	async deleteSession(sessionId: string): Promise<void> {
+		await apiService.delete(`/v1/chatbot/chat/${sessionId}/`, false);
 	}
 }
 

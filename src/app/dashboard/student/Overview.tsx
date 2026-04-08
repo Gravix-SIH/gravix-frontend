@@ -18,11 +18,17 @@ import {
 	Star,
 	Zap,
 	Loader2,
-	AlertCircle
+	AlertCircle,
+	Video,
+	Phone,
+	MapPin,
+	Link,
+	RefreshCw
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { studentService, assessmentService, BookingResponse, ResourceResponse, AssessmentResultResponse } from "@/services/studentService";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 const ASSESSMENT_LABELS: Record<string, { label: string; icon: any; color: string }> = {
 	phq9: { label: "Stress Level", icon: Brain, color: "bg-yellow-500" },
@@ -72,9 +78,18 @@ export default function StudentOverview({ setShowSection }: { setShowSection: (s
 	const [loadingBookings, setLoadingBookings] = useState(true);
 	const [loadingResources, setLoadingResources] = useState(true);
 	const [loadingScore, setLoadingScore] = useState(true);
+	const [meetingDetailsReceived, setMeetingDetailsReceived] = useState(false);
+	const prevMeetingDetailsRef = useRef<Record<string, boolean>>({});
 
 	useEffect(() => {
 		loadDashboardData();
+
+		// Poll for booking updates every 30 seconds to catch meeting details
+		const pollInterval = setInterval(() => {
+			loadDashboardData();
+		}, 30000);
+
+		return () => clearInterval(pollInterval);
 	}, []);
 
 	const loadDashboardData = async () => {
@@ -82,15 +97,32 @@ export default function StudentOverview({ setShowSection }: { setShowSection: (s
 		setLoadingResources(true);
 		setLoadingScore(true);
 
-		const [bookings, resources, score, assessments] = await Promise.all([
+		const [bookings, score, assessments] = await Promise.all([
 			studentService.getUpcomingBookings(),
-			studentService.getResources(),
 			studentService.getWeeklyHealthScore(),
 			assessmentService.getAssessments()
 		]);
 
+		// Load bookmarked resources separately
+		const bookmarked = await studentService.getBookmarkedResources();
+
+		// Check if any booking received meeting details for the first time
+		bookings.forEach((booking) => {
+			if (booking.status === "confirmed") {
+				const hasDetails = !!(booking.meeting_link || booking.meeting_address || booking.meeting_phone || booking.meeting_details);
+				const prevHadDetails = prevMeetingDetailsRef.current[booking.id];
+
+				if (hasDetails && !prevHadDetails && !meetingDetailsReceived) {
+					toast.success(`Meeting details received for your ${booking.session_type.replace("-", " ")} session!`);
+					setMeetingDetailsReceived(true);
+				}
+
+				prevMeetingDetailsRef.current[booking.id] = hasDetails;
+			}
+		});
+
 		setUpcomingBookings(bookings);
-		setBookmarkedResources(resources.filter((r: ResourceResponse) => r.category === 'bookmarked').slice(0, 3));
+		setBookmarkedResources(bookmarked.slice(0, 3));
 		setAssessmentResults(assessments);
 		setLoadingResources(false);
 		setLoadingBookings(false);
@@ -277,10 +309,21 @@ export default function StudentOverview({ setShowSection }: { setShowSection: (s
 					{/* Upcoming Appointments */}
 					<Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
 						<CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
-							<CardTitle className="flex items-center text-base sm:text-lg text-gray-900">
-								<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
-								Upcoming Sessions
-							</CardTitle>
+							<div className="flex items-center justify-between">
+								<CardTitle className="flex items-center text-base sm:text-lg text-gray-900">
+									<Calendar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-green-600" />
+									Upcoming Sessions
+								</CardTitle>
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={loadDashboardData}
+									disabled={loadingBookings}
+									className="h-8 px-2"
+								>
+									<RefreshCw className={`w-4 h-4 ${loadingBookings ? 'animate-spin' : ''}`} />
+								</Button>
+							</div>
 						</CardHeader>
 						<CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
 							{loadingBookings ? (
@@ -289,26 +332,123 @@ export default function StudentOverview({ setShowSection }: { setShowSection: (s
 								</div>
 							) : upcomingBookings.length > 0 ? (
 								<div className="space-y-3 sm:space-y-4">
-									{upcomingBookings.map((booking) => (
-										<div key={booking.id} className="p-3 sm:p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-100">
+									{upcomingBookings.map((booking) => {
+										// Check if booking is in the past
+										const bookingDate = new Date(booking.date);
+										const [hours, minutes, period] = booking.time.match(/(\d+):(\d+)\s*(AM|PM)/i)?.slice(1) || [];
+										let bookingHour = parseInt(hours);
+										if (period.toUpperCase() === 'PM' && bookingHour !== 12) bookingHour += 12;
+										if (period.toUpperCase() === 'AM' && bookingHour === 12) bookingHour = 0;
+										const bookingDateTime = new Date(bookingDate);
+										bookingDateTime.setHours(bookingHour, parseInt(minutes), 0, 0);
+										const isPast = bookingDateTime < new Date();
+
+										return (
+										<div key={booking.id} className={`p-3 sm:p-4 rounded-xl border ${isPast ? 'bg-gray-50 border-gray-200' : 'bg-gradient-to-r from-green-50 to-blue-50 border-green-100'}`}>
 											<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2 sm:mb-3">
 												<div>
-													<h4 className="font-semibold text-gray-900 text-sm sm:text-base">{booking.counsellor_name}</h4>
-													<p className="text-xs sm:text-sm text-text-secondary">{booking.counsellor_specialty}</p>
+													<h4 className={`font-semibold text-sm sm:text-base ${isPast ? 'text-gray-500' : 'text-gray-900'}`}>{booking.counsellor_name}</h4>
+													<p className={`text-xs sm:text-sm ${isPast ? 'text-gray-400' : 'text-text-secondary'}`}>{booking.counsellor_specialty}</p>
 												</div>
-												<Badge variant="success-soft">
-													{booking.session_type === "video" ? "Video Call" : booking.session_type === "in-person" ? "In-Person" : "Phone"}
+												<Badge variant={booking.status === "confirmed" ? (isPast ? "secondary" : "success-soft") : "secondary"}>
+													{booking.status === "confirmed" ? (
+														isPast ? (
+															<CheckCircle2 className="w-3 h-3 mr-1" />
+														) : (
+															<CheckCircle2 className="w-3 h-3 mr-1" />
+														)
+													) : (
+														<Clock className="w-3 h-3 mr-1" />
+													)}
+													{isPast ? 'Session Ended' : booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
 												</Badge>
 											</div>
-											<div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-700">
+											<div className={`flex flex-wrap items-center text-xs sm:text-sm mb-2 ${isPast ? 'text-gray-400' : 'text-gray-700'}`}>
 												<Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
 												<span className="font-medium">{new Date(booking.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
 												<span className="mx-1 sm:mx-2">•</span>
 												<Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
 												<span>{booking.time}</span>
 											</div>
+
+											{/* Past bookings don't show pending details, only confirmed */}
+											{!isPast && booking.status === "confirmed" && (
+												(() => {
+													const meetLink = booking.meeting_link || booking.meeting_details?.meet_link;
+													const address = booking.meeting_address || booking.meeting_details?.address;
+													const phone = booking.meeting_phone || booking.meeting_details?.phone;
+
+													if (meetLink || address || phone) {
+														return (
+															<div className="mt-2 p-2 bg-emerald-50 rounded-lg border border-emerald-200">
+																<p className="text-xs font-medium text-emerald-700 mb-1">Session Details:</p>
+																{meetLink && (
+																	<a
+																		href={meetLink}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="flex items-center text-xs text-blue-600 hover:text-blue-700 underline mb-1"
+																	>
+																		<Link className="w-3 h-3 mr-1" />
+																		Join Video Call
+																	</a>
+																)}
+																{address && (
+																	<p className="flex items-center text-xs text-gray-700 mb-1">
+																		<MapPin className="w-3 h-3 mr-1" />
+																		{address}
+																	</p>
+																)}
+																{phone && (
+																	<p className="flex items-center text-xs text-gray-700">
+																		<Phone className="w-3 h-3 mr-1" />
+																		{phone}
+																	</p>
+																)}
+															</div>
+														);
+													}
+
+													return (
+														<div className="mt-2 p-2 bg-amber-50 rounded-lg border border-amber-200">
+															<p className="text-xs text-amber-700">
+																Counselor will share meeting details soon
+															</p>
+														</div>
+													);
+												})()
+											)}
+
+											{/* Past confirmed bookings - show meeting details after session */}
+											{isPast && booking.status === "confirmed" && (
+												(() => {
+													const meetLink = booking.meeting_link || booking.meeting_details?.meet_link;
+													const address = booking.meeting_address || booking.meeting_details?.address;
+													const phone = booking.meeting_phone || booking.meeting_details?.phone;
+
+													if (meetLink || address || phone) {
+														return (
+															<div className="mt-2 p-2 bg-gray-100 rounded-lg border border-gray-200">
+																<p className="text-xs text-gray-500 mb-1">Meeting details used:</p>
+																{meetLink && <p className="text-xs text-gray-500">Video call link shared</p>}
+																{address && <p className="text-xs text-gray-500">In-person location shared</p>}
+																{phone && <p className="text-xs text-gray-500">Phone call details shared</p>}
+															</div>
+														);
+													}
+													return null;
+												})()
+											)}
+
+											{/* Notes preview */}
+											{booking.notes && (
+												<p className={`text-xs mt-2 italic line-clamp-1 ${isPast ? 'text-gray-400' : 'text-text-secondary'}`}>
+													Note: {booking.notes}
+												</p>
+											)}
 										</div>
-									))}
+									);
+									})}
 								</div>
 							) : (
 								<div className="text-center py-6">

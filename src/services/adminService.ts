@@ -28,6 +28,13 @@ export interface AdminBooking {
   session_type: "video" | "in-person" | "phone";
   status: "pending" | "confirmed" | "cancelled" | "completed";
   notes: string;
+  // Meeting details fields (flat from backend)
+  meeting_link?: string | null;
+  meeting_phone?: string | null;
+  meeting_address?: string | null;
+  // Nested meeting_details
+  meeting_details?: { meet_link?: string; address?: string; phone?: string } | null;
+  confirmed_at?: string | null;
   created_at: string;
 }
 
@@ -171,7 +178,12 @@ class AdminService {
 
   async updateBooking(
     id: string,
-    data: { status: string }
+    data: {
+      status?: string;
+      meeting_link?: string | null;
+      meeting_address?: string | null;
+      meeting_phone?: string | null;
+    }
   ): Promise<AdminBooking> {
     return apiService.patch<AdminBooking>(`/admin/bookings/${id}/`, data);
   }
