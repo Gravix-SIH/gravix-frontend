@@ -1,20 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
-import Lenis from 'lenis';
-
-interface LenisOptions {
-	lerp?: number;
-	duration?: number;
-	easing?: (t: number) => number;
-	direction?: 'vertical' | 'horizontal' | 'both';
-	gestureDirection?: 'vertical' | 'horizontal' | 'both';
-	smooth?: boolean;
-	smoothTouch?: boolean;
-	wheelMultiplier?: number;
-	touchMultiplier?: number;
-	infinite?: boolean;
-}
+import { useEffect, useRef } from 'react';
+import Lenis, { LenisOptions as TLenisOptions } from 'lenis';
 
 let lenisInstance: Lenis | null = null;
 let isLenisRunning = true;
@@ -27,7 +14,7 @@ export function getIsLenisRunning() {
 	return isLenisRunning;
 }
 
-export function useLenis(options?: LenisOptions) {
+export function useLenis(options?: Partial<TLenisOptions>) {
 	const lenisRef = useRef<Lenis | null>(null);
 
 	useEffect(() => {
@@ -51,11 +38,9 @@ export function useLenis(options?: LenisOptions) {
 			const lenis = new Lenis({
 				lerp: options?.lerp ?? 0.1,
 				duration: options?.duration ?? 1.2,
-				easing: options?.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
-				direction: options?.direction ?? 'vertical',
-				gestureDirection: options?.gestureDirection ?? 'vertical',
-				smooth: options?.smooth ?? true,
-				smoothTouch: options?.smoothTouch ?? true,
+				easing: options?.easing ?? ((t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
+				smoothWheel: options?.smoothWheel ?? true,
+				syncTouch: options?.syncTouch ?? false,
 				wheelMultiplier: options?.wheelMultiplier ?? 1,
 				touchMultiplier: options?.touchMultiplier ?? 2,
 				infinite: options?.infinite ?? false,
@@ -94,18 +79,14 @@ export function stopLenis() {
 	}
 }
 
-let lenisInitTimeout: NodeJS.Timeout | null = null;
-
 export function startLenis() {
 	if (!lenisInstance && isLenisRunning) {
 		// Reinitialize Lenis
 		const lenis = new Lenis({
 			lerp: 0.1,
 			duration: 1.2,
-			direction: 'vertical',
-			gestureDirection: 'vertical',
-			smooth: true,
-			smoothTouch: false,
+			smoothWheel: true,
+			syncTouch: false,
 			wheelMultiplier: 1,
 			touchMultiplier: 2,
 		});
@@ -130,8 +111,8 @@ export function useLenisScroll() {
 		scrollTo: (target: string | number | HTMLElement, options?: Parameters<Lenis['scrollTo']>[1]) => {
 			lenis?.scrollTo(target, options);
 		},
-		scrollBy: (distance: number, options?: Parameters<Lenis['scrollBy']>[1]) => {
-			lenis?.scrollBy(distance, options);
+		scrollBy: (distance: number, options?: { immediate?: boolean; duration?: number }) => {
+			lenis?.scroll(distance, options);
 		},
 		scrollToTop: () => {
 			lenis?.scrollTo(0, { duration: 1.5 });

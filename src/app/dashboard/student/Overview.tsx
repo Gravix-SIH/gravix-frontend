@@ -18,8 +18,6 @@ import {
 	Star,
 	Zap,
 	Loader2,
-	AlertCircle,
-	Video,
 	Phone,
 	MapPin,
 	Link,
@@ -29,8 +27,9 @@ import { useState, useEffect, useRef } from "react";
 import { studentService, assessmentService, BookingResponse, ResourceResponse, AssessmentResultResponse } from "@/services/studentService";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { LucideIcon } from "lucide-react";
 
-const ASSESSMENT_LABELS: Record<string, { label: string; icon: any; color: string }> = {
+const ASSESSMENT_LABELS: Record<string, { label: string; icon: LucideIcon; color: string }> = {
 	phq9: { label: "Stress Level", icon: Brain, color: "bg-yellow-500" },
 	gad7: { label: "Anxiety Scale", icon: Heart, color: "bg-blue-500" },
 	psqi: { label: "Sleep Quality", icon: Moon, color: "bg-green-500" }
@@ -155,8 +154,8 @@ export default function StudentOverview({ setShowSection }: { setShowSection: (s
 			<div className="mb-6 sm:mb-8">
 				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
 					<div>
-						<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome back{user?.name ? `, ${user.name.split(' ')[0]}` : ""}! 👋</h1>
-						<p className="text-purple-700">Here's your health and wellness overview for today</p>
+						<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome back, {user?.name ? user.name.split(" ")[0] : ""} 👋</h1>
+						<p className="text-purple-700">Here is your health and wellness overview for today</p>
 					</div>
 					<div className="flex items-center">
 						<Badge variant="success-soft">

@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export function useBooking() {
-	const [bookings, setBookings] = useState<any[]>([]);
+	const [bookings, setBookings] = useState<Record<string, unknown>[]>([]);
 
 	const createBooking = async (slotId: string) => {
 		const res = await fetch("/api/booking", {

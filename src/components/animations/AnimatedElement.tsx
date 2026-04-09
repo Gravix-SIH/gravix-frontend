@@ -14,7 +14,7 @@ interface AnimatedElementProps {
 	hover?: boolean;
 	scrollReveal?: boolean;
 	as?: React.ElementType;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export const AnimatedElement = forwardRef<HTMLDivElement, AnimatedElementProps>(

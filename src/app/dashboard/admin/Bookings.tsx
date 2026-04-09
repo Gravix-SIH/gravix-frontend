@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +32,7 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
 	pending: {
 		label: "Pending",
 		color: "bg-amber-100 text-amber-700 border-amber-200",
@@ -55,7 +55,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: any }> 
 	},
 };
 
-const sessionIcon = (type: string) => {
+const sessionIcon = (type: string): React.ElementType => {
 	switch (type) {
 		case "video":
 			return <Video className="w-3.5 h-3.5" />;
@@ -99,8 +99,8 @@ export default function AdminBookings() {
 		try {
 			const data = await adminService.getBookings(filters);
 			setBookings(data);
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Unknown error");
 			toast.error("Failed to load bookings");
 		} finally {
 			setLoading(false);
@@ -141,8 +141,8 @@ export default function AdminBookings() {
 			}
 			toast.success(`Booking ${status === "confirmed" ? "approved" : status === "cancelled" ? "cancelled" : "updated"}`);
 			fetchBookings({ status: statusFilter && statusFilter !== "__all__" ? statusFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to update booking: " + e.message);
+		} catch (e) {
+			toast.error("Failed to update booking: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}

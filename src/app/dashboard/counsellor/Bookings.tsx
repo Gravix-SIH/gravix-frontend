@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -33,7 +34,7 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
 	pending: {
 		label: "Pending",
 		color: "bg-amber-100 text-amber-700 border-amber-200",
@@ -204,7 +205,7 @@ function ConfirmModal({ booking, onClose, onConfirm, isEdit = false }: ConfirmMo
 				{/* Student Notes */}
 				{booking.notes && (
 					<div className="mx-4 mt-4 p-3 bg-purple-50 rounded-xl border border-purple-100">
-						<p className="text-xs font-medium text-purple-700 mb-1">Student's Notes:</p>
+						<p className="text-xs font-medium text-purple-700 mb-1">Notes from Student:</p>
 						<p className="text-sm text-purple-900">{booking.notes}</p>
 					</div>
 				)}
@@ -331,8 +332,8 @@ export default function CounsellorBookings() {
 		try {
 			const data = await counselorService.getBookings(filters);
 			setBookings(data);
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load bookings");
 			toast.error("Failed to load bookings");
 		} finally {
 			setLoading(false);
@@ -374,8 +375,8 @@ export default function CounsellorBookings() {
 			});
 			toast.success("Session confirmed with meeting details");
 			fetchBookings({ status: statusFilter && statusFilter !== "__all__" ? statusFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to confirm: " + e.message);
+		} catch (e) {
+			toast.error("Failed to confirm: " + (e instanceof Error ? e.message : "Unknown error"));
 			throw e;
 		} finally {
 			setActionLoading(null);
@@ -393,8 +394,8 @@ export default function CounsellorBookings() {
 			});
 			toast.success("Meeting details updated");
 			fetchBookings({ status: statusFilter && statusFilter !== "__all__" ? statusFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to update: " + e.message);
+		} catch (e) {
+			toast.error("Failed to update: " + (e instanceof Error ? e.message : "Unknown error"));
 			throw e;
 		} finally {
 			setActionLoading(null);
@@ -414,8 +415,8 @@ export default function CounsellorBookings() {
 			});
 			toast.success("Session cancelled");
 			fetchBookings({ status: statusFilter && statusFilter !== "__all__" ? statusFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to cancel: " + e.message);
+		} catch (e) {
+			toast.error("Failed to cancel: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}

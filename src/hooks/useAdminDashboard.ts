@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export function useAdminDashboard() {
-	const [stats, setStats] = useState<any>(null);
+	const [stats, setStats] = useState<unknown>(null);
 
 	const fetchStats = async () => {
 		const res = await fetch("/api/admin/stats");

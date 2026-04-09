@@ -11,28 +11,24 @@ interface LenisProviderProps {
 	enableAnimations?: boolean;
 }
 
-export function LenisProvider({ 
-	children, 
+export function LenisProvider({
+	children,
 	enableSmoothScroll = true,
-	enableAnimations = true 
+	enableAnimations = true
 }: LenisProviderProps) {
 	// Initialize Lenis smooth scrolling with optimized settings
-	if (enableSmoothScroll) {
-		useLenis({
-			lerp: 0.1,
-			duration: 1.2,
-			smooth: true,
-			smoothTouch: true,
-			wheelMultiplier: 1,
-			touchMultiplier: 2,
-		});
-	}
+	useLenis({
+		lerp: 0.1,
+		duration: 1.2,
+		smooth: enableSmoothScroll,
+		smoothTouch: enableSmoothScroll,
+		wheelMultiplier: 1,
+		touchMultiplier: 2,
+	});
 
 	// Refresh GSAP ScrollTrigger on resize for responsive animations
-	if (enableAnimations) {
-		useGSAPRefreshTrigger();
-		useReducedMotionPreference(); // Respect user motion preferences
-	}
+	useGSAPRefreshTrigger();
+	useReducedMotionPreference(); // Respect user motion preferences
 
 	return <>{children}</>;
 }

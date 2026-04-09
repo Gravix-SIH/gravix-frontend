@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import {
 	Settings as SettingsIcon,
 	Globe,
-	Mail,
 	Bell,
 	Shield,
 	Save,
@@ -34,6 +32,8 @@ export default function AdminSettings() {
 		setSaving(false);
 		toast.success("Settings saved successfully");
 	};
+
+	type ToggleKey = "maintenanceMode" | "emailNotifications" | "crisisAlert";
 
 	return (
 		<div className="p-4 sm:p-6 space-y-6 max-w-2xl">
@@ -110,20 +110,20 @@ export default function AdminSettings() {
 							</div>
 							<button
 								className={`relative w-11 h-6 rounded-full transition-colors ${
-									(formData as any)[item.key]
+									formData[item.key as ToggleKey]
 										? "bg-indigo-500"
 										: "bg-gray-300"
 								}`}
 								onClick={() =>
 									setFormData({
 										...formData,
-										[item.key]: !(formData as any)[item.key],
+										[item.key]: !formData[item.key as ToggleKey],
 									})
 								}
 							>
 								<span
 									className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
-										(formData as any)[item.key] ? "translate-x-5" : ""
+										formData[item.key as ToggleKey] ? "translate-x-5" : ""
 									}`}
 								/>
 							</button>

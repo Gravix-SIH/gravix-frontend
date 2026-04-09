@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +21,7 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 10;
 
-const typeConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
+const typeConfig: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
 	phq9: {
 		icon: Brain,
 		color: "text-red-600",
@@ -57,8 +58,8 @@ export default function CounsellorAssessments() {
 			try {
 				const data = await counselorService.getAssessments(params);
 				setAssessments(data);
-			} catch (e: any) {
-				setError(e.message);
+			} catch (e) {
+				setError(e instanceof Error ? e.message : "Failed to load assessments");
 				toast.error("Failed to load assessments");
 			} finally {
 				setLoading(false);
@@ -99,6 +100,15 @@ export default function CounsellorAssessments() {
 		if (!items.length) return 0;
 		return (items.reduce((s, a) => s + a.score, 0) / items.length).toFixed(1);
 	};
+
+	interface SeverityBadgeProps {
+		severity: string;
+	}
+
+	function SeverityBadge({ severity }: SeverityBadgeProps) {
+		const variant = severity.toLowerCase().replace(/\s+/g, "-") as Parameters<typeof Badge>[0]['variant'];
+		return <Badge variant={variant}>{severity}</Badge>;
+	}
 
 	return (
 		<div className="p-4 sm:p-6 space-y-4">
@@ -193,9 +203,7 @@ export default function CounsellorAssessments() {
 														<p className="text-sm font-semibold">
 															{a.user_name || a.user_email || "Anonymous Student"}
 														</p>
-														<Badge variant={a.severity.toLowerCase().replace(/\s+/g, "-") as any}>
-															{a.severity}
-														</Badge>
+														<SeverityBadge severity={a.severity} />
 													</div>
 													<div className="flex items-center gap-3 mt-0.5">
 														<span className="text-xs text-text-secondary">
@@ -272,9 +280,7 @@ export default function CounsellorAssessments() {
 								<h3 className="font-semibold">{selected.user_name || selected.user_email}</h3>
 								<p className="text-sm text-text-secondary">{typeConfig[selected.assessment_type]?.label}</p>
 							</div>
-							<Badge variant={selected.severity.toLowerCase().replace(/\s+/g, "-") as any}>
-								{selected.severity}
-							</Badge>
+							<SeverityBadge severity={selected.severity} />
 						</div>
 						<div className="space-y-2 mb-4">
 							<div className="flex justify-between text-sm">

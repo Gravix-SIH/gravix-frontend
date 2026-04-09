@@ -5,7 +5,7 @@ import { ChatMessage } from '@/models';
 interface SendMessagePayload {
 	sessionId: string;
 	content: string;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export function useSendMessage() {

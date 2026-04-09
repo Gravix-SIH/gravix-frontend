@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,7 @@ import {
 import { studentService, ResourceResponse } from "@/services/studentService";
 import { toast } from "sonner";
 
-const typeConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
+const typeConfig: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
 	article: { icon: BookOpen, color: "text-emerald-600", bg: "bg-emerald-50", label: "Guide" },
 	video: { icon: Video, color: "text-purple-600", bg: "bg-purple-50", label: "Video" },
 	document: { icon: FileText, color: "text-amber-600", bg: "bg-amber-50", label: "Document" },
@@ -143,8 +144,8 @@ export default function StudentResources() {
 			]);
 			setResources(allResources);
 			setBookmarkedIds(new Set(bookmarked.map((r: ResourceResponse) => r.id)));
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load resources");
 			toast.error("Failed to load resources");
 		} finally {
 			setLoading(false);

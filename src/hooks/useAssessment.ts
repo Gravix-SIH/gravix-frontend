@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export function useAssessment() {
-	const [results, setResults] = useState<any>(null);
+	const [results, setResults] = useState<Record<string, unknown> | null>(null);
 
 	const submitAssessment = async (answers: Record<string, string>) => {
 		const res = await fetch("/api/assessment", {

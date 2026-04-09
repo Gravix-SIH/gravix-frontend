@@ -7,12 +7,9 @@ import {
 	Brain,
 	Moon,
 	Heart,
-	Play,
 	Clock,
 	BarChart3,
 	Star,
-	Calendar,
-	CheckCircle2,
 	LoaderPinwheel,
 	TrendingUp,
 } from "lucide-react";
@@ -73,8 +70,8 @@ export default function AdminAssessments() {
 		adminService
 			.getAssessmentStats()
 			.then(setStats)
-			.catch((e: any) => {
-				setError(e.message);
+			.catch((e) => {
+				setError(e instanceof Error ? e.message : "Failed to load assessment stats");
 				toast.error("Failed to load assessment stats");
 			})
 			.finally(() => setLoading(false));

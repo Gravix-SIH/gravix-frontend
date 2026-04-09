@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,7 @@ import { toast } from "sonner";
 
 const ITEMS_PER_PAGE = 9;
 
-const typeConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
+const typeConfig: Record<string, { icon: React.ElementType; color: string; bg: string; label: string }> = {
 	article: { icon: BookOpen, color: "text-indigo-600", bg: "bg-indigo-50", label: "Article" },
 	video: { icon: Video, color: "text-rose-600", bg: "bg-rose-50", label: "Video" },
 	document: { icon: FileText, color: "text-amber-600", bg: "bg-amber-50", label: "Document" },
@@ -118,8 +119,8 @@ export default function AdminResources() {
 		try {
 			const data = await adminService.getResources(filters);
 			setResources(data);
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load resources");
 			toast.error("Failed to load resources");
 		} finally {
 			setLoading(false);
@@ -159,8 +160,8 @@ export default function AdminResources() {
 			setDeleteConfirmId(null);
 			toast.success("Resource deleted successfully");
 			fetchResources({ category: categoryFilter && categoryFilter !== "__all__" ? categoryFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to delete: " + e.message);
+		} catch (e) {
+			toast.error("Failed to delete: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}
@@ -196,8 +197,8 @@ export default function AdminResources() {
 
 			closeForm();
 			fetchResources({ category: categoryFilter && categoryFilter !== "__all__" ? categoryFilter : undefined });
-		} catch (e: any) {
-			toast.error("Failed to save: " + e.message);
+		} catch (e) {
+			toast.error("Failed to save: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}

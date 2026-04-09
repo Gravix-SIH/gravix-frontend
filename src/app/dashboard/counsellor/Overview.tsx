@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { counselorService, CounselorStats } from "@/services/CounselorService";
 import { toast } from "sonner";
+import { LucideIcon } from "lucide-react";
 
 function StatCard({
 	title,
@@ -23,7 +24,7 @@ function StatCard({
 }: {
 	title: string;
 	value: string | number;
-	icon: any;
+	icon: LucideIcon;
 	color: string;
 	subtitle?: string;
 }) {

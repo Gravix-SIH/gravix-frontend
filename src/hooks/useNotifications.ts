@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 export function useNotifications() {
-	const [notifications, setNotifications] = useState<any[]>([]);
+	const [notifications, setNotifications] = useState<Record<string, unknown>[]>([]);
 
 	const fetchNotifications = async () => {
 		const res = await fetch("/api/notifications");

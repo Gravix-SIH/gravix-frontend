@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { stopLenis, startLenis } from "@/hooks/useLenis";
 import { motion } from "framer-motion";
+import { LucideIcon } from "lucide-react";
 
 // Import all role-based tab components
 import StudentOverview from "./student/Overview";
@@ -41,7 +42,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { UserRole } from "@/models/User";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
-const navConfig: Record<UserRole, { label: string; key: string; icon: any }[]> = {
+const navConfig: Record<UserRole, { label: string; key: string; icon: LucideIcon }[]> = {
 	student: [
 		{ label: "Overview", key: "overview", icon: LayoutDashboard },
 		{ label: "Chat", key: "chat", icon: Bot },

@@ -1,18 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
-import { Bot, BriefcaseBusiness, Check, GraduationCap, Heart, HeartPulseIcon, Layers, Leaf, MessageCircleCode, NotebookText, Shield, ShieldPlus, Users } from "lucide-react";
-import { AnimatedElement, ScrollRevealSection, ParallaxSection, HoverAnimation } from "@/components/animations/AnimatedElement";
-import { useGSAPFadeIn, useGSAPScrollReveal, useGSAPParallax } from "@/hooks/useGSAPAnimations";
+import { Bot, BriefcaseBusiness, Check, GraduationCap, Heart, HeartPulseIcon, Layers, Leaf, NotebookText, Shield, ShieldPlus, Users } from "lucide-react";
+import { AnimatedElement, ScrollRevealSection, HoverAnimation } from "@/components/animations/AnimatedElement";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function HomePage() {
-	const { user, loading } = useAuth();
+	const { user } = useAuth();
 	const router = useRouter();
 
 	const getDashboardLink = () => {

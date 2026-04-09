@@ -80,7 +80,6 @@ const ASSESSMENTS = [
 export default function StudentAssessment() {
   const [results, setResults] = useState<AssessmentResultResponse[]>([]);
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentConfig | null>(null);
-  const [loading, setLoading] = useState(true);
 
   // Load assessments from API
   useEffect(() => {
@@ -88,10 +87,8 @@ export default function StudentAssessment() {
   }, []);
 
   const loadAssessments = async () => {
-    setLoading(true);
     const data = await assessmentService.getAssessments();
     setResults(data);
-    setLoading(false);
   };
 
   const handleAssessmentComplete = async (
@@ -359,7 +356,7 @@ export default function StudentAssessment() {
                     <div key={result.id} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-white rounded-lg border border-gray-100">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-gray-900 text-xs sm:text-sm">{assessment?.title || result.assessment_type}</h4>
-                        <Badge variant={(result.severity || "").toLowerCase().replace(/\s+/g, "-") as any}>
+                        <Badge variant={((result.severity || "").toLowerCase().replace(/\s+/g, "-")) as Parameters<typeof Badge>[0]['variant']}>
                           {result.severity}
                         </Badge>
                       </div>

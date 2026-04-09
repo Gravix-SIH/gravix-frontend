@@ -40,8 +40,8 @@ export default function AdminUsers() {
 		try {
 			const data = await adminService.getUsers(filters);
 			setUsers(data);
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load users");
 			toast.error("Failed to load users");
 		} finally {
 			setLoading(false);
@@ -65,8 +65,8 @@ export default function AdminUsers() {
 				search: search || undefined,
 				role: roleFilter && roleFilter !== "__all__" ? roleFilter : undefined,
 			});
-		} catch (e: any) {
-			toast.error("Failed to update role: " + e.message);
+		} catch (e) {
+			toast.error("Failed to update role: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}
@@ -81,8 +81,8 @@ export default function AdminUsers() {
 				search: search || undefined,
 				role: roleFilter && roleFilter !== "__all__" ? roleFilter : undefined,
 			});
-		} catch (e: any) {
-			toast.error("Failed to update status: " + e.message);
+		} catch (e) {
+			toast.error("Failed to update status: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}
@@ -98,8 +98,8 @@ export default function AdminUsers() {
 				search: search || undefined,
 				role: roleFilter && roleFilter !== "__all__" ? roleFilter : undefined,
 			});
-		} catch (e: any) {
-			toast.error("Failed to delete user: " + e.message);
+		} catch (e) {
+			toast.error("Failed to delete user: " + (e instanceof Error ? e.message : "Unknown error"));
 		} finally {
 			setActionLoading(null);
 		}

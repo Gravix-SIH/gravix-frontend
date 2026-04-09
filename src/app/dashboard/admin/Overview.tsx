@@ -7,6 +7,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { LoaderPinwheel, Users, CalendarCheck, BookOpen, BrainCircuit, TrendingUp, Activity } from "lucide-react";
 import { adminService, AdminStats } from "@/services/adminService";
 import { toast } from "sonner";
+import { LucideIcon } from "lucide-react";
 
 const COLORS = ["#6366f1", "#22c55e", "#f97316"];
 
@@ -19,7 +20,7 @@ function StatCard({
 }: {
 	title: string;
 	value: string | number;
-	icon: any;
+	icon: LucideIcon;
 	color: string;
 	subtitle?: string;
 }) {

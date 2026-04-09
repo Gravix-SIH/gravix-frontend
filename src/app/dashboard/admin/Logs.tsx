@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoaderPinwheel } from "lucide-react";
@@ -70,8 +71,8 @@ export default function AdminLogs() {
 		try {
 			const data = await adminService.getAuditLogs(filters);
 			setLogs(data);
-		} catch (e: any) {
-			setError(e.message);
+		} catch (e) {
+			setError(e instanceof Error ? e.message : "Failed to load audit logs");
 		} finally {
 			setLoading(false);
 		}

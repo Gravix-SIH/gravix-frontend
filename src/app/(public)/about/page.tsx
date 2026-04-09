@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { AnimatedElement, HoverAnimation } from "@/components/animations/AnimatedElement";
-import { useGSAPFadeIn, useGSAPScrollReveal, useGSAPParallax } from "@/hooks/useGSAPAnimations";
 
 export default function AboutPage() {
 	const team = [
@@ -37,7 +36,7 @@ export default function AboutPage() {
 					className="mt-4 max-w-2xl mx-auto text-base sm:text-lg text-text-secondary text-center px-4"
 				>
 					We believe digital wellbeing should be smart, accessible, and human-first.
-					That's why we're building tools to empower people with <strong>clarity</strong>,
+					That is why we are building tools to empower people with <strong>clarity</strong>,
 					<strong> focus</strong>, and <strong>connection</strong>.
 				</AnimatedElement>
 			</section>
@@ -178,7 +177,7 @@ export default function AboutPage() {
 					scrollReveal
 					className="mt-4 max-w-xl mx-auto text-base sm:text-lg px-4"
 				>
-					We're building the next generation of digital wellbeing and productivity
+					We are building the next generation of digital wellbeing and productivity
 					tools. Join us and help shape the future.
 				</AnimatedElement>
 				<AnimatedElement

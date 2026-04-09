@@ -16,8 +16,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { apiClient } from "@/lib/apiClient";
-import { UserResponse } from "@/models/User";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -65,7 +63,7 @@ export default function SignupPage() {
 				duration: 3000,
 			});
 			router.push('/dashboard');
-		} catch (error: any) {
+		} catch (error) {
 			console.log(error);
 			toast.error("Something went wrong.", { duration: 3000 });
 

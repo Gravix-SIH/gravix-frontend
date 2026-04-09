@@ -1,14 +1,13 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -50,7 +49,7 @@ const LoginPage: FC = () => {
 				duration: 3000,
 			});
 			router.push('/dashboard');
-		} catch (error: any) {
+		} catch (error) {
 			console.log(error);
 			toast.error("Something went wrong.", { duration: 3000 });
 		}
@@ -63,8 +62,8 @@ const LoginPage: FC = () => {
 				duration: 3000,
 			});
 			router.push('/dashboard');
-		} catch (error: any) {
-			console.log(error.message);
+		} catch (error) {
+			console.log(error);
 			toast.error("Something went wrong.", { duration: 3000 });
 		}
 	}
