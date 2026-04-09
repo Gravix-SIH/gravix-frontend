@@ -55,7 +55,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.E
 	},
 };
 
-const sessionIcon = (type: string): React.ElementType => {
+const sessionIcon = (type: string): React.ReactElement => {
 	switch (type) {
 		case "video":
 			return <Video className="w-3.5 h-3.5" />;

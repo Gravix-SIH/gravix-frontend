@@ -1,11 +1,16 @@
 "use client";
-import { User } from '@/models';
 import { LoginCredentials, SignupCredentials } from '@/models/types';
 import { authService } from '@/services/authService';
 import { useState, useEffect, useContext, createContext, ReactNode } from 'react';
 
+type CurrentUser = Awaited<ReturnType<typeof authService.getCurrentUser>>;
+type LoginUser = Awaited<ReturnType<typeof authService.login>>['user'];
+type SignupUser = Awaited<ReturnType<typeof authService.signup>>['user'];
+type AnonymousUser = Awaited<ReturnType<typeof authService.loginAnon>>['user'];
+type AuthUser = CurrentUser | LoginUser | SignupUser | AnonymousUser;
+
 interface AuthContextType {
-	user: User | null;
+	user: AuthUser | null;
 	loading: boolean;
 	login: (credentials: LoginCredentials) => Promise<void>;
 	loginAnonymous: () => Promise<void>;
@@ -13,6 +18,7 @@ interface AuthContextType {
 	logout: () => Promise<void>;
 	refreshUser: () => Promise<void>;
 	checkInitialAuth: () => Promise<void>;
+	getToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,9 +28,8 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<AuthUser | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		checkInitialAuth();
@@ -103,6 +108,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		}
 	};
 
+	const getToken = async (): Promise<string | null> => {
+        try {
+            const svc = authService as typeof authService & {
+                getToken?: () => string | null | Promise<string | null>;
+            };
+            return (await Promise.resolve(svc.getToken?.())) ?? null;
+        } catch {
+            return null;
+        }
+    };
+
 	const value = {
 		user,
 		loading,
@@ -112,6 +128,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 		logout,
 		refreshUser,
 		checkInitialAuth,
+		getToken
 	};
 
 	return (

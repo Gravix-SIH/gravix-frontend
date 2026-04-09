@@ -1,32 +1,36 @@
 // Performance optimization utilities for Lenis and GSAP integration
 
 // Debounce for resize/scroll events
-export const debounce = (func: Function, wait: number) => {
-	let timeout: NodeJS.Timeout;
-	return function executedFunction(...args: any[]) {
-		const later = () => {
-			clearTimeout(timeout);
-			func(...args);
-		};
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
+export const debounce = <T extends (...args: any[]) => void>(func: T, wait: number) => {
+	let timeout: ReturnType<typeof setTimeout> | undefined;
+
+	return function executedFunction(this: ThisParameterType<T>, ...args: Parameters<T>) {
+		if (timeout) clearTimeout(timeout);
+
+		timeout = setTimeout(() => {
+			func.apply(this, args);
+		}, wait);
 	};
 };
 
 // Throttle for high-frequency events
-export const throttle = (func: Function, limit: number) => {
-	let inThrottle: boolean;
-	return function (...args: any[]) {
-		if (!inThrottle) {
-			func.apply(this, args);
-			inThrottle = true;
-			setTimeout(() => (inThrottle = false), limit);
-		}
+export const throttle = <T extends (...args: any[]) => void>(func: T, limit: number) => {
+	let inThrottle = false;
+
+	return function throttled(this: ThisParameterType<T>, ...args: Parameters<T>) {
+		if (inThrottle) return;
+
+		func.apply(this, args);
+		inThrottle = true;
+		setTimeout(() => {
+			inThrottle = false;
+		}, limit);
 	};
 };
 
 // Check if animations should be reduced (prefers-reduced-motion)
 export const prefersReducedMotion = () => {
+	if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
 	return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
 

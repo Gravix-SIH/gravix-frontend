@@ -103,17 +103,21 @@ export function startLenis() {
 }
 
 export function useLenisScroll() {
-	const lenis = useLenis();
+    const lenis = useLenis();
 
-	return {
-		scrollTo: (target: string | number | HTMLElement, options?: Parameters<Lenis['scrollTo']>[1]) => {
-			lenis?.scrollTo(target, options);
-		},
-		scrollBy: (distance: number, options?: { immediate?: boolean; duration?: number }) => {
-			lenis?.scroll(distance, options);
-		},
-		scrollToTop: () => {
-			lenis?.scrollTo(0, { duration: 1.5 });
-		},
-	};
+    return {
+        scrollTo: (target: string | number | HTMLElement, options?: Parameters<Lenis['scrollTo']>[1]) => {
+            lenis?.scrollTo(target, options);
+        },
+        scrollBy: (distance: number, options?: { immediate?: boolean; duration?: number }) => {
+            const currentY = typeof window !== 'undefined' ? window.scrollY : 0;
+            lenis?.scrollTo(currentY + distance, {
+                immediate: options?.immediate,
+                duration: options?.duration,
+            });
+        },
+        scrollToTop: () => {
+            lenis?.scrollTo(0, { duration: 1.5 });
+        },
+    };
 }

@@ -2,16 +2,18 @@
 import { useAuth } from "./useAuth";
 
 export function useSecureFetch() {
-	const { user, getToken } = useAuth();
+    const { user, getToken } = useAuth();
 
-	const secureFetch = async (url: string, options: RequestInit = {}) => {
-		const token = user ? getToken() : null;
-		const headers = {
-			...options.headers,
-			Authorization: token ? `Bearer ${token}` : "",
-		};
-		return fetch(url, { ...options, headers });
-	};
+    const secureFetch = async (url: string, options: RequestInit = {}) => {
+        const token = user ? await getToken() : null;
 
-	return { secureFetch };
+        const headers = new Headers(options.headers);
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+
+        return fetch(url, { ...options, headers });
+    };
+
+    return { secureFetch };
 }

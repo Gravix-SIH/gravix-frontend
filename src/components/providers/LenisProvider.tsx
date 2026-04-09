@@ -20,8 +20,8 @@ export function LenisProvider({
 	useLenis({
 		lerp: 0.1,
 		duration: 1.2,
-		smooth: enableSmoothScroll,
-		smoothTouch: enableSmoothScroll,
+		smoothWheel: enableSmoothScroll,
+		syncTouch: !enableSmoothScroll,
 		wheelMultiplier: 1,
 		touchMultiplier: 2,
 	});
