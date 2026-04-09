@@ -31,7 +31,7 @@ export function useLenis(options?: Partial<TLenisOptions>) {
 			return;
 		}
 
-		let timeoutId: NodeJS.Timeout;
+		const timeoutId : NodeJS.Timeout = setTimeout(initLenis, 100);
 		let rafId: number;
 
 		function initLenis() {
@@ -58,8 +58,6 @@ export function useLenis(options?: Partial<TLenisOptions>) {
 
 			rafId = requestAnimationFrame(raf);
 		}
-
-		timeoutId = setTimeout(initLenis, 100);
 
 		// Cleanup
 		return () => {
