@@ -18,8 +18,9 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { authApi } from "@/services/authApi";
 
 // ✅ Validation schema with zod
 const signupSchema = z.object({
@@ -32,8 +33,9 @@ const signupSchema = z.object({
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
-	const { loading, signup, checkInitialAuth, user } = useAuth();
+	const { loading, checkInitialAuth, user } = useAuth();
 	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const form = useForm<SignupFormValues>({
 		resolver: zodResolver(signupSchema),
 		defaultValues: {
@@ -57,16 +59,28 @@ export default function SignupPage() {
 	}, [user, checkInitialAuth, router]);
 
 	async function onSubmit(values: SignupFormValues) {
+		setIsSubmitting(true);
 		try {
-			await signup(values);
-			toast.info(`User registered successfully.`, {
-				duration: 3000,
+			const response = await authApi.sendVerification({
+				email: values.email,
+				name: values.name,
+				password: values.password,
+				role: values.role,
 			});
-			router.push('/dashboard');
+
+			if (response.success) {
+				toast.success("Verification code sent to your email", {
+					duration: 3000,
+				});
+				router.push(`/verify-email?email=${encodeURIComponent(values.email)}`);
+			} else {
+				toast.error(response.error || "Failed to send verification code", { duration: 3000 });
+			}
 		} catch (error) {
 			console.log(error);
 			toast.error("Something went wrong.", { duration: 3000 });
-
+		} finally {
+			setIsSubmitting(false);
 		}
 	}
 
@@ -151,8 +165,8 @@ export default function SignupPage() {
 							</Link>
 						</p>
 
-						<Button type="submit" className="w-full" disabled={loading}>
-							{"Sign Up"}
+						<Button type="submit" className="w-full" disabled={isSubmitting}>
+							{isSubmitting ? "Sending Code..." : "Sign Up"}
 						</Button>
 					</form>
 				</Form>

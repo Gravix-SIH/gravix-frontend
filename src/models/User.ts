@@ -9,6 +9,7 @@ export interface User {
   is_anonymous: boolean;
   anon_id?: string;
   is_active: boolean;
+  is_verified: boolean;
   created_at: Date;
   updated_at: Date;
 }

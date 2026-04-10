@@ -169,7 +169,7 @@ export const sendAssessmentReminderEmail = async (
   });
 };
 
-// Account Verification Email
+// Account Verification Email (URL version)
 export const sendAccountVerificationEmail = async (
   data: AccountVerificationEmailData
 ): Promise<boolean> => {
@@ -188,6 +188,36 @@ export const sendAccountVerificationEmail = async (
   return sendEmail({
     to: data.userEmail,
     subject: 'Verify Your Email Address - Gravix',
+    html: baseEmailTemplate(content),
+  });
+};
+
+// Account Verification Email (Code version)
+export interface AccountVerificationCodeEmailData {
+  userName: string;
+  userEmail: string;
+  verificationCode: string;
+  expiresInMinutes?: number;
+}
+
+export const sendAccountVerificationCodeEmail = async (
+  data: AccountVerificationCodeEmailData
+): Promise<boolean> => {
+  const expiresIn = data.expiresInMinutes || 10;
+  const content = `
+    <h2>Hello ${data.userName},</h2>
+    <p>Thank you for creating an account on Gravix. Your verification code is:</p>
+    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+      <p style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #667eea;">${data.verificationCode}</p>
+    </div>
+    <p>This code will expire in ${expiresIn} minutes.</p>
+    <p>If you didn't create an account on Gravix, please ignore this email.</p>
+    <p style="margin-top: 20px;">Best regards,<br>The Gravix Team</p>
+  `;
+
+  return sendEmail({
+    to: data.userEmail,
+    subject: 'Your Verification Code - Gravix',
     html: baseEmailTemplate(content),
   });
 };
