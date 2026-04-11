@@ -268,14 +268,17 @@ class ChatService {
 	}
 
 	/**
-	 * Create a new chat session
+	 * Create a new chat session. Uses JWT auth for authenticated users,
+	 * falls back to anonymous_id for unauthenticated/anonymous users.
 	 */
 	async newChat(anonymousId?: string): Promise<NewChatResponse> {
 		const payload: NewChatRequest = {};
 		if (anonymousId) {
 			payload.anonymous_id = anonymousId;
 		}
-		const response = await apiService.post<NewChatResponse>('/v1/chatbot/chat/new/', payload, false);
+		// Use requiresAuth=true so JWT is sent for authenticated users
+		// For anonymous users (no JWT), backend falls back to anonymous_id
+		const response = await apiService.post<NewChatResponse>('/v1/chatbot/chat/new/', payload, true);
 		return response;
 	}
 
@@ -287,7 +290,7 @@ class ChatService {
 		if (anonymousId) {
 			payload.anonymous_id = anonymousId;
 		}
-		const response = await apiService.post<SendMessageResponse>('/v1/chatbot/chat/', payload, false);
+		const response = await apiService.post<SendMessageResponse>('/v1/chatbot/chat/', payload, true);
 		return response;
 	}
 
@@ -295,7 +298,7 @@ class ChatService {
 	 * Get all chat sessions
 	 */
 	async getHistory(): Promise<SessionHistoryResponse> {
-		const response = await apiService.get<SessionHistoryResponse>('/v1/chatbot/chat/history/', false);
+		const response = await apiService.get<SessionHistoryResponse>('/v1/chatbot/chat/history/', true);
 		return response;
 	}
 
@@ -303,7 +306,7 @@ class ChatService {
 	 * Get conversation history for a session
 	 */
 	async getChat(sessionId: string): Promise<ConversationHistoryResponse> {
-		const response = await apiService.get<ConversationHistoryResponse>(`/v1/chatbot/chat/history/${sessionId}/`, false);
+		const response = await apiService.get<ConversationHistoryResponse>(`/v1/chatbot/chat/history/${sessionId}/`, true);
 		return response;
 	}
 
@@ -318,7 +321,7 @@ class ChatService {
 	 * Get mood summary for a session
 	 */
 	async getMoodSummary(sessionId: string): Promise<MoodSummaryResponse> {
-		const response = await apiService.get<MoodSummaryResponse>(`/v1/chatbot/chat/mood/${sessionId}/`, false);
+		const response = await apiService.get<MoodSummaryResponse>(`/v1/chatbot/chat/mood/${sessionId}/`, true);
 		return response;
 	}
 
@@ -326,7 +329,7 @@ class ChatService {
 	 * Delete a chat session
 	 */
 	async deleteSession(sessionId: string): Promise<void> {
-		await apiService.delete(`/v1/chatbot/chat/${sessionId}/`, false);
+		await apiService.delete(`/v1/chatbot/chat/${sessionId}/`, true);
 	}
 }
 

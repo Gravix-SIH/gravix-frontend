@@ -131,7 +131,7 @@ class ApiService {
 
 			// Handle specific error status codes
 			if (response.status === 409) {
-				throw new Error('This slot has already been booked. Please select another time.');
+				throw new Error(errorData.error || errorData.message || 'This slot has already been booked. Please select another time.');
 			}
 
 			if (response.status === 429) {

@@ -26,7 +26,7 @@ export const authApi = {
 	}): Promise<SendVerificationResponse> {
 		try {
 			const response = await apiService.post<SendVerificationResponse>(
-				'/auth/send-verification',
+				'/send-verification',
 				data,
 				false
 			);
@@ -43,7 +43,7 @@ export const authApi = {
 	async verifyEmail(email: string, code: string): Promise<VerifyEmailResponse> {
 		try {
 			const response = await apiService.post<VerifyEmailResponse>(
-				'/auth/verify-email',
+				'/verify-email',
 				{ email, code },
 				false
 			);
@@ -60,7 +60,7 @@ export const authApi = {
 	async resendVerification(email: string): Promise<SendVerificationResponse> {
 		try {
 			const response = await apiService.post<SendVerificationResponse>(
-				'/auth/resend-verification',
+				'/resend-verification',
 				{ email },
 				false
 			);
