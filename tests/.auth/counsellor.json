@@ -1,0 +1,18 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:3000",
+      "localStorage": [
+        {
+          "name": "refresh_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3ODU4ODgyNSwiaWF0IjoxNzc1OTk2ODI1LCJqdGkiOiIxNTZiNzY1ZGQyNjA0ZDdmODhmOTVmNDU2MzkwZDRmMCIsInVzZXJfaWQiOiJjNzAwMGYzMS00M2UxLTRkNDctOWYyNy00MWZhMTkwYjRmNjAifQ.C9rRZNZwtvPFLbn029bry2gljHK1aQTGavgJl7YVymI"
+        },
+        {
+          "name": "access_token",
+          "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzc2NDI4ODI1LCJpYXQiOjE3NzU5OTY4MjUsImp0aSI6Ijg4MTQ2YzlhZmFhZTQ2NmRhMDc1ZjcxMmI0YWE3ZjAyIiwidXNlcl9pZCI6ImM3MDAwZjMxLTQzZTEtNGQ0Ny05ZjI3LTQxZmExOTBiNGY2MCJ9.6KCzykWh2AoglGzsRbQOuJM8etnZEs8qiC84B-ol3kQ"
+        }
+      ]
+    }
+  ]
+}
